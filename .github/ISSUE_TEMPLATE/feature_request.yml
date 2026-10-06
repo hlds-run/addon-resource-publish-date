@@ -1,0 +1,59 @@
+name: Feature request
+description: Suggest a change to the add-on
+title: "[Feature] "
+labels: ["type: enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Most requests here are answered by an existing setting before they need
+        code. Please check [docs/CONFIGURATION.md](https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/CONFIGURATION.md)
+        first and mention it in your answer if one of them already covers this.
+
+        Requests that need a schema change, or that change what the add-on writes,
+        get a much longer conversation. Say so if yours does.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: |
+        What situation makes you reach for this. Concrete beats abstract: "a
+        resource approved after the What's new window has no way to surface"
+        is actionable, "more options" is not.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like to happen
+      render: markdown
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: How invasive is this?
+      description: |
+        Honest answers here shorten the discussion. Pick the worst that applies.
+      options:
+        - A new setting under Options, no schema change
+        - Changes which fields are written
+        - Needs a new column or table
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: |
+        Including SQL you could run yourself, or a cron job. If a manual
+        workflow is good enough, that is a valid answer too.
+      render: markdown
+  - type: checkboxes
+    attributes:
+      label: Willing to contribute
+      options:
+        - label: I would be willing to send a pull request for this
+          required: false

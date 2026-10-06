@@ -1,0 +1,15 @@
+# Build artefacts.
+# Regenerate with: php tools/build.php
+/_build/
+/_output/
+/_releases/
+
+# Editor / OS noise
+.idea/
+.vscode/
+.DS_Store
+*.swp
+Thumbs.db
+
+# Note: hashes.json is NOT ignored. XenForo uses it for the file integrity
+# check and for update detection, so it is source and must be committed.
