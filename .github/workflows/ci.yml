@@ -1,0 +1,173 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    # A tag push is a push event that `branches:` does not match, so version tags
+    # have to be listed explicitly. Without this the release job below is
+    # unreachable: it gates on github.ref being a tag, but nothing ever runs it on
+    # one.
+    #
+    # Plain version numbers, no `v` prefix, to match version_string and the
+    # archive name. See "Versions, tags and file names" in docs/DEVELOPING.md.
+    tags: ['[0-9]*']
+  pull_request:
+
+permissions:
+  contents: read
+
+# A push supersedes any run still in flight for the same ref. Pushes here are
+# small and fast, so two overlapping runs are pure waste.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # XenForo 2.3 runs on PHP 7.4+. The add-on must therefore parse on every
+  # version the forum might use, which is what catches an accidental arrow
+  # function or constructor property promotion. See docs/DEVELOPING.md.
+  #
+  # Two versions, not five. PHP syntax features are additive, so anything newer
+  # than the floor already fails on 7.4 - 7.4 is the only binding constraint, and
+  # it is the one that matters, because 7.4 is the oldest version a XenForo 2.3
+  # board can run. The newest version is the other end: it catches syntax
+  # deprecated or removed in current PHP. 8.0, 8.1 and 8.2 sit between two
+  # versions that already agree, and each one cost a runner and a setup-php.
+  php-syntax:
+    name: PHP syntax (${{ matrix.label }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: '7.4 (floor)'
+            setup: true
+            php: '7.4'
+          - label: 'newest'
+            # ubuntu-latest ships PHP 8.3 with ext-zip, simplexml and dom, so
+            # this job needs no setup step at all - the single biggest saving in
+            # this workflow. The version actually used is echoed in the log
+            # rather than asserted, so an image bump needs no edit here.
+            setup: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - uses: shivammathur/setup-php@v2
+        if: matrix.setup
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - if: ${{ !matrix.setup }}
+        run: php -v
+
+      - name: Lint
+        run: |
+          status=0
+          while IFS= read -r file; do
+            if ! out=$(php -l "$file" 2>&1); then
+              echo "::error file=$file::$out"
+              status=1
+            fi
+          done < <(find upload -name '*.php' -type f)
+          exit $status
+
+  check:
+    name: Check and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      # No setup-php: the preinstalled PHP 8.3 has ext-zip, so tools/build.php can
+      # produce the archive. php -v is echoed so the log records what ran.
+      - name: Toolchain
+        run: |
+          php -v
+          php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ext-zip missing on this runner\n"); exit(1); }'
+
+      - name: Structural checks
+        run: php tools/check.php
+
+      # `php -l` parses and says nothing about inheritance. Loading the classes
+      # does: a class that does not implement its parent's abstract methods dies
+      # here rather than on somebody's forum.
+      - name: Class loading
+        run: php tools/class_check.php
+
+      - name: Build release archive
+        run: php tools/build.php
+
+      - name: hashes.json is current
+        run: |
+          # `git diff` alone would pass here: on a first run hashes.json is a new
+          # untracked file, and untracked files do not appear in a diff. Ask git
+          # for the whole working tree state instead.
+          if [ -n "$(git status --porcelain -- upload/src/addons/HldsRun/ResourcePublishDate/hashes.json)" ]; then
+            echo '::error::hashes.json is missing or stale - commit the regenerated file'
+            git status --porcelain -- upload/src/addons/HldsRun/ResourcePublishDate/hashes.json
+            git diff -- upload/src/addons/HldsRun/ResourcePublishDate/hashes.json
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: HldsRun-ResourcePublishDate
+          path: _releases/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Release
+    needs: [check, php-syntax]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # Checkout first, and that ordering is load-bearing. actions/checkout runs
+      # `git clean -ffdx`, which deletes untracked files - so checking out after
+      # downloading the artifact silently removes it again. The first version of
+      # this workflow had them the other way round and published a release with
+      # release notes and no archive, successfully, because
+      # action-gh-release does not fail on an unmatched glob.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      # The archive from the job that already verified this commit, rather than
+      # a rebuild. Faster, and it guarantees what gets published is byte-identical
+      # to what passed - a second build is a second chance to ship something else.
+      - uses: actions/download-artifact@v8
+        with:
+          name: HldsRun-ResourcePublishDate
+          path: _releases
+
+      - name: Release notes from the changelog
+        run: php tools/release_notes.php > release-notes.md
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v3
+        with:
+          # A release with notes and no archive is not a release. Without this the
+          # action logs "does not match any files" and carries on.
+          fail_on_unmatched_files: true
+          # Stated rather than left to the action's default, so the title is a
+          # decision. It matches the tag, and both match version_string, with no
+          # `v` prefix anywhere - see "Versions, tags and file names" in
+          # docs/DEVELOPING.md.
+          name: ${{ github.ref_name }}
+          files: _releases/*.zip
+          # Notes come from CHANGELOG.md, not from the commit log. Generated
+          # notes list commits, which says what changed in the repository rather
+          # than what someone installing needs to know - and they cannot be read
+          # before they ship. One source, so the two cannot disagree.
+          body_path: release-notes.md
+          # Published, not drafted: a tag is an explicit statement that the
+          # commit is released, so the release goes out with it. Drafting made
+          # every release need a second manual step to become visible, which is
+          # the kind of ceremony that gets forgotten - and a forgotten draft is a
+          # release nobody can download.
+          draft: false
