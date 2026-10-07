@@ -41,15 +41,19 @@ class TranslationInstaller extends AbstractService
         $report = [];
 
         foreach ($this->getAvailableCodes() as $code) {
-            $language = $this->findLanguageForCode($code);
-
-            // The board has no language this translation is for. That is the common
-            // case on an English-only board, and it is not an error.
-            if (!$language) {
-                continue;
-            }
-
+            // Everything a translation does happens inside this try, including the
+            // lookup. Wrapping only install() looked sufficient and was not: the
+            // lookup queries the database, so it can fail exactly like the import
+            // can, and an uncaught throw here aborts the install batch.
             try {
+                $language = $this->findLanguageForCode($code);
+
+                // The board has no language this translation is for. That is the
+                // common case on an English-only board, and it is not an error.
+                if (!$language) {
+                    continue;
+                }
+
                 $report[] = [
                     'code' => $code,
                     'language' => $language->title,
@@ -103,7 +107,9 @@ class TranslationInstaller extends AbstractService
      */
     public function findLanguageForCode(string $code)
     {
-        $languages = $this->em()->findAll(Language::class);
+        // The entity manager has no findAll(). XF\Finder is the way to get a
+        // collection of every row, and this is what the CLI listing already used.
+        $languages = \XF::finder(Language::class)->order('title')->fetch();
         $wanted = strtolower($code);
         $regional = null;
 
