@@ -21,9 +21,18 @@ Every one of these shipped and was found on a live forum:
 | 1.0.0 | `class Setup extends AbstractSetup` | `install()`/`upgrade()`/`uninstall()` are abstract; the three step-runner traits are mandatory |
 | 1.1.0 | `$this->em()->findAll()` | The entity manager has no such method; `XF\Finder` is how you get a collection |
 | 1.1.1 | `\XF::logInfo()` | Does not exist. `XF::logError()` is the only logging entry point besides `logException()` |
+| 1.1.2 | `count($code)` | `count()` on a string is a `TypeError` on PHP 8. Every call has a right one; `strlen()` here |
+| 1.1.2 | `\XF::phrase()` in `configure()` | Legal, and fatal: `XF\Cli\Runner` builds the command list before it starts its app |
+| 1.1.2 | `$output->table()` | Not on `OutputInterface`; table rendering is on Symfony's `Table` helper |
 
-All four read plausibly. None was reachable by `php -l`. None was reachable by any
-check that existed at the time.
+All seven read plausibly. None was reachable by `php -l`. Only the first four were
+reachable by any check that existed at the time.
+
+The last two share a cause worth naming: **both are on a path nothing in the
+repository ever executes.** A clean install runs `postInstall()` and stops; a CLI
+command runs when somebody types it. Development and CI do neither, so a release
+could go out with both broken and every automated signal green. Part 4 is the
+answer; `TESTING.md` is where the commands to run actually live.
 
 ### How to look a call up
 
@@ -124,6 +133,28 @@ php tools/class_check.php          # must fail on the pre-fix source
 If it does not, extend it before fixing. A fix without a check means the next agent
 inherits the same trap.
 
+**Verify that the check actually fails before you believe it does.** A check that
+passes on the pre-fix source catches nothing, and a check nobody re-runs against
+broken input is a comment with an exit code. Put the bug back, run the check,
+confirm it fails, restore the fix.
+
+### When no check can cover it
+
+Not every bug has a sound static check, and writing one anyway is worse than
+having none: a check with false positives gets disabled, and a disabled check
+catches nothing while still reading as protection.
+
+`count($code)` where `$code` is a string (1.1.2) is the example. A pass would have
+to infer `$code`'s type, and the only way to do that reliably is to parse types -
+at which point it fails on every correct-but-unannotated call. The honest options
+are the clean-install procedure in Part 4 and reading the trace, and the changelog
+should say which one carried the fix rather than implying a check did.
+
+Two shapes from the same release *were* worth checking, and `check.php` now has
+them: an `\XF::app()`-backed call inside a CLI command's `configure()`, and
+`$output->table()`. Both are unambiguous text patterns with no false-positive
+surface.
+
 ### 4. Decide the version
 
 | Change | Version |
@@ -134,7 +165,7 @@ inherits the same trap.
 | Anything writing different data | minor, and an `UPGRADE.md` note |
 
 `version_id` is a monotonically increasing integer, not derived from the version
-string. Current: `1000014` for `1.1.2`. The 1.0.x/1.1.x series each consumed one.
+string. Current: `1000015` for `1.1.3`. The 1.0.x/1.1.x series each consumed one.
 
 A **phrase's** `version_id` is separate and follows XenForo's own rule: it exists so
 an upgrade knows a changed text must be rewritten, so it moves only when a phrase's
@@ -207,9 +238,10 @@ first.
 
 ## Part 4: Why clean installs matter
 
-Three of the four bugs only occurred during `postInstall()`, which runs **once**,
-on the first install, and never again. A forum where the add-on is already
-installed cannot show them.
+Most of the bugs only occurred during `postInstall()`, which runs **once**,
+on the first install, and never again, or during a CLI command, which nobody runs
+during development. A forum where the add-on is already installed, and where the
+CLI has never been invoked, cannot show either.
 
 Before cutting any release that touches install-time or approval-time code:
 
@@ -217,7 +249,11 @@ Before cutting any release that touches install-time or approval-time code:
    the Admin CP, from the built archive - not from a working copy.
 2. **Approve something** in the moderation queue: a resource, and its thread. This
    is the other path only a real forum exercises.
-3. Read the error log afterwards. `postInstall()` writes there.
+3. **Run both CLI commands**, each with the flags that only write nothing:
+   `php src/cmd.php hlds-run-rpd:import-translation` (no arguments - the language
+   listing) and `php src/cmd.php hlds-run-rpd:backfill --dry-run`. Both crashed on
+   a released version, in ways that a clean install and a data rebuild cannot show.
+4. Read the error log afterwards. `postInstall()` writes there.
 
 The manual checklist for the rest is `TESTING.md`.
 

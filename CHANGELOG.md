@@ -18,6 +18,49 @@ Nothing yet. Add entries here as you go, one line per user-visible change.
 
 ---
 
+## [1.1.3] - 2026-10-07
+
+Three fixes to the paths that only run once. All three were found on the test
+forum after a clean install of 1.1.2.
+
+### Fixed
+
+- **Russian phrases were never installed.** On a fresh install the add-on stayed
+  half-English in every language whose code carries a region suffix - which
+  includes Russian, because XenForo's own language pack ships `ru-RU` and the
+  add-on ships `ru.xml`.
+
+  Admin CP -> Phrases for that language showed the English master text for all 46
+  phrases, because no translated row had been created. The importer compared the
+  board's language code with `count($code)`, and `count()` on a string is an error
+  on PHP 8, so the comparison threw before it could match. Install logs the
+  failure and continues by design, so the add-on reported a successful install
+  having imported nothing.
+
+  Existing installs are not changed by this release: a re-import would overwrite
+  phrases an administrator may have edited in Admin CP -> Phrases. If your forum
+  is in this state, run `php src/cmd.php hlds-run-rpd:import-translation` (no
+  argument) to see which languages match, then pass a language id to import it.
+
+- **`php src/cmd.php` failed on every command on the board.** The message was
+  `A second app cannot be setup`, and it was not limited to this add-on's two
+  commands - XenForo builds its whole command list before starting its CLI app,
+  and this add-on's commands created a web app while being registered, which
+  left nowhere for the CLI app to go. Both commands now describe themselves in
+  plain English, as XenForo's own do.
+
+- **`hlds-run-rpd:import-translation` crashed when listing languages.** It called
+  a table-rendering method that does not exist on Symfony's output interface.
+  The listing now renders.
+
+### Added
+
+- `tools/check.php` rejects `\XF::app()`-backed calls inside a CLI command's
+  `configure()`, and `$output->table()`. Both shipped in 1.1.2 and neither was
+  visible until a command was run on a live board.
+
+---
+
 ## [1.1.2] - 2026-10-07
 
 Fixes a fourth fatal error on the install path, again found on the test forum.
@@ -302,6 +345,7 @@ fails if the two key sets ever drift apart in either direction.
   forum without the three step-runner traits that `XF\AddOn\AbstractSetup`
   requires, and reported success on install.
 
+[1.1.3]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.1.3
 [1.1.2]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.1.2
 [1.1.1]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.1.1
 [1.1.0]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.1.0

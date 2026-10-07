@@ -32,11 +32,17 @@ Follow [INSTALL.md](INSTALL.md). Confirm:
 - [ ] Add-on installs and enables without a requirement error
 - [ ] **Tools → File Check** shows no unexpected content for the add-on
 - [ ] **Options → Resource publish date** exists and lists all seven settings
-- [ ] `php src/cmd.php hlds-run-rpd:import-translation` lists languages
+- [ ] `php src/cmd.php hlds-run-rpd:import-translation` lists languages, and the
+      Russian row shows a shipped translation rather than `none`
+- [ ] **Admin CP → Phrases** for the Russian language shows Russian text for
+      `option.hldsRunRpdEnabled`, without the CLI having been run - install
+      imports translations on its own
 - [ ] `php src/cmd.php hlds-run-rpd:import-translation <id> --dry-run` reports a
       phrase count equal to the master count
-- [ ] After importing, **Admin CP → Phrases** shows Russian text for
-      `option.hldsRunRpdEnabled`
+- [ ] `php src/cmd.php hlds-run-rpd:backfill --dry-run` runs and writes nothing
+
+The last three run commands that only fire on a forum, and one of them broke
+`php src/cmd.php` for *every* command on the board. Run all three.
 
 ## 3. The core scenario: a resource moderated, then approved
 
