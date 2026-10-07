@@ -9,6 +9,8 @@
     inline moderation (XFRM\InlineMod\ResourceItem) and the approval queue job
     (XF\Job\ApprovalQueueProcess) all call this one service.
 
+    XF\Service\Thread\ApproverService is the same funnel for threads.
   -->
   <extension from_class="XFRM\Service\ResourceItem\Approve" to_class="HldsRun\ResourcePublishDate\XFRM\Service\ResourceItem\Approve" execute_order="10" active="1"/>
+  <extension from_class="XF\Service\Thread\ApproverService" to_class="HldsRun\ResourcePublishDate\XF\Service\Thread\ApproverService" execute_order="10" active="1"/>
 </class_extensions>
