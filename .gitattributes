@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+# Documentation and data files.
+*.md   text diff=markdown
+*.xml  text
+*.json text
+
+# Never touch line endings inside these.
+*.zip  binary
+*.png  binary
