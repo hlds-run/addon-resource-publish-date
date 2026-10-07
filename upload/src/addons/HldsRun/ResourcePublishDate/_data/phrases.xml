@@ -43,6 +43,7 @@
 
   <phrase title="option.hldsRunRpdExcludedCategories" version_id="1000010" version_string="1.0.0"><![CDATA[Excluded resource categories]]></phrase>
   <phrase title="option_explain.hldsRunRpdExcludedCategories" version_id="1000010" version_string="1.0.0"><![CDATA[Resources in these categories keep their original dates. Use it for categories that are curated on a long cycle and where sudden reordering would be unwanted. Ids of categories that no longer exist are removed automatically when you save.]]></phrase>
+  <phrase title="hlds_run_rpd_all_categories" version_id="1000016" version_string="1.2.0"><![CDATA[All categories]]></phrase>
 
   <phrase title="option.hldsRunRpdLogToModeratorLog" version_id="1000010" version_string="1.0.0"><![CDATA[Record date shifts in the moderator log]]></phrase>
   <phrase title="option_explain.hldsRunRpdLogToModeratorLog" version_id="1000010" version_string="1.0.0"><![CDATA[Adds a moderator log entry for every date shift, so the change is auditable next to the approval entry. The backfill command disables this by default because moderator log entries need an HTTP request in order to resolve the moderator's IP address.]]></phrase>

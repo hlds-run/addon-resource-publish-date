@@ -28,9 +28,10 @@ run.
 
 ### 3. Is the category excluded?
 
-`hldsRunRpdExcludedCategories` is a checkbox list of resource categories. If the
-resource's category is ticked, nothing happens - deliberately, so that curated
-categories keep a stable order.
+`hldsRunRpdExcludedCategories` is a scrolling multiple select of resource
+categories. If the resource's category is selected, nothing happens -
+deliberately, so that curated categories keep a stable order. *All categories*
+means nothing is excluded.
 
 ### 4. Is the scope "first approval" and this not the first one?
 

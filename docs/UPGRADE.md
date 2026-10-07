@@ -40,6 +40,20 @@ Then verify, in this order:
    new `_data/options.xml`, which is a signal to stop and investigate.
 4. `php src/cmd.php xf:addon-upgrade` is idempotent, so running it twice is safe.
 
+### When a release renames an `edit_format="callback"` method
+
+`xf:addon-upgrade` is not a formality in this case. The callback name is stored
+in `xf_option.edit_format_params`, which the file check and the version number
+know nothing about, so deploying the new PHP over unchanged option data renders
+
+```
+DEBUG: <option_id> - Invalid method <class>::<oldName>
+```
+
+in place of the option until the rebuild runs. The option keeps its stored value;
+nothing is lost, and the rebuild is the whole fix. 1.2.0 did this to
+`Option\ExcludedCategories::renderCheckbox`.
+
 ### Translations after an upgrade
 
 **Master phrases are updated automatically. Translations are not.**

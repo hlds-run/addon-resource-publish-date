@@ -18,6 +18,59 @@ Nothing yet. Add entries here as you go, one line per user-visible change.
 
 ---
 
+## [1.2.0] - 2026-10-07
+
+The category exclusion option was unusable: it rendered as a settings row with a
+title, an explanation and no field to answer them with, so exclusions could not
+be configured from the options page at all. Fixed, and rebuilt as the compact
+component the core widget settings use for their own node limiter.
+
+### Fixed
+
+- **The excluded categories option had no field to select in.** The row rendered
+  its title and explanation and nothing else. The choices come from
+  `AbstractCategoryTree::getCategoryOptionsData()` in the structured
+  `id => ['value' =>, 'label' =>]` form, but they were passed through
+  `XF\Option\AbstractOption::getCheckboxRow()`, whose `mergeChoiceOptions()`
+  step only accepts scalar labels and silently dropped every entry.
+
+### Changed
+
+- **The excluded categories option is now the compact multi-select** used by the
+  core widget settings for their node limiter - scrolling list, seven rows
+  visible, *All categories* pre-selected at the top - instead of a checkbox per
+  category. Long category trees meant a checkbox list that ran past the fold of
+  the options page. Nesting is shown with non-breaking spaces, not the run of
+  hyphens `getCategoryOptionsData()` bakes into its labels, so indentation no
+  longer looks like part of the category name.
+
+### For administrators
+
+Two things to do, both in the order given:
+
+1. **Run the data rebuild**, because the rendering callback was renamed:
+
+   ```bash
+   php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate
+   ```
+
+   The old name lives in `_data/options.xml`, so deploying the new code over
+   unchanged option data shows `DEBUG: hldsRunRpdExcludedCategories - Invalid
+   method ...::renderCheckbox` in place of the option. Nothing else breaks; the
+   rebuild fixes it. Stored exclusions are untouched.
+
+2. **Re-import the Russian translation**, which gained one phrase:
+
+   ```bash
+   php src/cmd.php hlds-run-rpd:import-translation 6
+   ```
+
+   The list argument is your language's id; run the command with no arguments to
+   see them. Until you do, the first row of the new list reads *All categories*
+   in English.
+
+---
+
 ## [1.1.3] - 2026-10-07
 
 Three fixes to the paths that only run once. All three were found on the test

@@ -73,10 +73,16 @@ against `thread.post_date`.
 
 **Default: empty.** Stored as a JSON array of `resource_category_id`.
 
-Rendered with a checkbox list built from the live XFRM category tree via
-`Option\ExcludedCategories` (the same `edit_format="callback"` mechanism XenForo
-core uses for sitemap exclusions). Ids of categories that no longer exist are
-dropped when you save, so the option cannot accumulate stale entries.
+Rendered as a scrolling multiple select built from the live XFRM category tree
+via `Option\ExcludedCategories` - the same component the core widget settings
+use for their "limit to nodes" field. The first row is *All categories*, which
+means nothing is excluded; it is pre-selected on a fresh install. Ids of
+categories that no longer exist are dropped when you save, so the option cannot
+accumulate stale entries.
+
+Because this uses `edit_format="callback"`, changing the callback method name
+requires `xf:addon-upgrade` (or a rebuild) on every board - see
+[UPGRADE.md](UPGRADE.md).
 
 The backfill command honours this list too, and re-checks it against the live
 option rather than trusting its own query.

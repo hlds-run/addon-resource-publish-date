@@ -513,6 +513,44 @@ function checkCliConfigure(string $file, string $contents): void
 	}
 }
 
+/**
+ * Rejects the AbstractOption row helpers, which silently swallow structured
+ * choices.
+ *
+ * `getCheckboxRow()`, `getSelectRow()` and `getRadioRow()` funnel their choices
+ * through `Templater::mergeChoiceOptions()`, and that method only accepts
+ * scalars: it keeps an entry when the value is a string, a number or an object
+ * with `__toString()`, and drops everything else without a word. XenForo's own
+ * repository methods return the structured form instead - `id => ['value' =>
+ * $id, 'label' => $title]` - so passing one of those straight through renders a
+ * control with no options in it, and the options page shows the row's title and
+ * explanation with nothing to answer them with. That shipped as 1.1.3.
+ *
+ * So: if you want these helpers, pass them a scalar list of your own. If your
+ * choices come from a repository, build the `$controlOptions` and call
+ * `Templater::formCheckBoxRow()` / `formSelectRow()` / `formRadioRow()` directly,
+ * which is what Option\ExcludedCategories does.
+ */
+function checkOptionRowHelpers(array $phpFiles): void
+{
+	$helpers = ['getCheckboxRow', 'getSelectRow', 'getRadioRow'];
+
+	foreach ($phpFiles as $file) {
+		$code = preg_replace(['#/\*.*?\*/#s', '#//[^\n]*#'], '', readText($file));
+
+		foreach ($helpers as $helper) {
+			if (!preg_match('#(?:static|self)::' . $helper . '\s*\(#', $code)) {
+				continue;
+			}
+
+			fail(basename($file) . ": static::$helper() drops non-scalar choices - "
+				. 'Templater::mergeChoiceOptions() keeps only strings, numbers and '
+				. '__toString objects, and every repository method in XenForo returns '
+				. "['value' =>, 'label' =>] rows. Call Templater::form*Row() directly.");
+		}
+	}
+}
+
 // --------------------------------------------------------------------------- main
 
 $phpFiles = addonPhpFiles($addonRoot);
@@ -526,6 +564,7 @@ checkNamespaces($phpFiles, $addonRoot);
 checkPhrases($dataDir, $translationsDir, $phpFiles, $addonRoot);
 checkOptions($dataDir, parsePhrases($dataDir . '/phrases.xml', '_data/phrases.xml', false), $phpFiles);
 checkCliCommands($addonRoot);
+checkOptionRowHelpers($phpFiles);
 
 foreach ($notes as $message) {
 	echo "  $message\n";

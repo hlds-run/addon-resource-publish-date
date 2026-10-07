@@ -41,6 +41,7 @@
 
   <phrase title="option.hldsRunRpdExcludedCategories" addon_id="HldsRun/ResourcePublishDate" version_id="1000010" version_string="1.0.0"><![CDATA[Исключённые категории ресурсов]]></phrase>
   <phrase title="option_explain.hldsRunRpdExcludedCategories" addon_id="HldsRun/ResourcePublishDate" version_id="1000010" version_string="1.0.0"><![CDATA[Ресурсы в этих категориях сохраняют исходные даты. Используйте для категорий с длинным циклом набора, где резкая перестановка списков нежелательна. ID несуществующих категорий удаляются автоматически при сохранении.]]></phrase>
+  <phrase title="hlds_run_rpd_all_categories" addon_id="HldsRun/ResourcePublishDate" version_id="1000016" version_string="1.2.0"><![CDATA[Все категории]]></phrase>
 
   <phrase title="option.hldsRunRpdLogToModeratorLog" addon_id="HldsRun/ResourcePublishDate" version_id="1000010" version_string="1.0.0"><![CDATA[Записывать сдвиги дат в лог модератора]]></phrase>
   <phrase title="option_explain.hldsRunRpdLogToModeratorLog" addon_id="HldsRun/ResourcePublishDate" version_id="1000010" version_string="1.0.0"><![CDATA[Добавляет запись в лог модератора на каждый сдвиг даты, чтобы изменение было видно рядом с записью об одобрении. Команда backfill по умолчанию это отключает: для записи в лог модератора нужен HTTP-запрос, чтобы определить IP модератора.]]></phrase>

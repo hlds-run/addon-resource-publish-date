@@ -1,8 +1,8 @@
 {
-    "src/addons/HldsRun/ResourcePublishDate/addon.json": "24c43aaa85041d3891e7c445ff91442e5128722c354ef8661e7e18c6a5c3186c",
+    "src/addons/HldsRun/ResourcePublishDate/addon.json": "3e8a1aa69b7451328ae231adb2291f56861ce5c5cf40c2f31b9e3b13901ac577",
     "src/addons/HldsRun/ResourcePublishDate/Cli/Command/BackfillPublishDates.php": "5f9188b40dca1e6fe707899747208780fed663ff27b4c2f77ace5baec4dc404b",
     "src/addons/HldsRun/ResourcePublishDate/Cli/Command/ImportTranslation.php": "fd27b99b2c2994d61aafaec27fba827e5abe19825f4196840299a69c43ea5281",
-    "src/addons/HldsRun/ResourcePublishDate/Option/ExcludedCategories.php": "886afad0681a8b329e80afb139206cfd97084af01c321c34a62d28c8c61a863f",
+    "src/addons/HldsRun/ResourcePublishDate/Option/ExcludedCategories.php": "50e4882366d158b6b85ced7f43125a2d519f779d46e9e003694890da53db5322",
     "src/addons/HldsRun/ResourcePublishDate/PublishDateAddOn.php": "c43859db2d2e1787e24bcc0cbf147ecac0644df969368546d268150b9c999646",
     "src/addons/HldsRun/ResourcePublishDate/Service/BumpResult.php": "f17d5eafea1413b5a9c10f1d41325823e9836898e772afa21346f77e509a4f19",
     "src/addons/HldsRun/ResourcePublishDate/Service/PublishDateManager.php": "983cb11276012c86e5553a38522109685722ca5b37e842f2062e78f12c73d150",
@@ -11,8 +11,8 @@
     "src/addons/HldsRun/ResourcePublishDate/XF/Service/Thread/ApproverService.php": "a3c7f773383c7d60bdbe74193d9f8a65ec49912fe30f00c15dc3c204c81ad64e",
     "src/addons/HldsRun/ResourcePublishDate/XFRM/Service/ResourceItem/Approve.php": "d75036d810a9be5011ed75fcb02c187c6cebbeade2861ba66849b2584ca842d0",
     "src/addons/HldsRun/ResourcePublishDate/_data/class_extensions.xml": "3afd846516d0b2cf91dcb1033567829b72ebf51fc32bad7caf5b38d5b74f3305",
-    "src/addons/HldsRun/ResourcePublishDate/_data/options.xml": "58278cc3bec4da4548005b9d225375fac99b378898f1bdf51595fbf91382eb9a",
+    "src/addons/HldsRun/ResourcePublishDate/_data/options.xml": "62ab3d79f59deea4f04731ebf7b9b879be71d2c332b7a12941cb869f80e3a226",
     "src/addons/HldsRun/ResourcePublishDate/_data/option_groups.xml": "53a50adec9c6dd1ebb374fcaf676823baac2693e915ea8bfae601b910a9b4799",
-    "src/addons/HldsRun/ResourcePublishDate/_data/phrases.xml": "ded472e04f9de4aa174b4fbf331b1f25f3bd58677de6b7a5d8dcf5f746c35b57",
-    "src/addons/HldsRun/ResourcePublishDate/_translations/ru.xml": "fd484391ae928acd9eac3b4abb34f8102f54560936bb848184b0c33f41227dd0"
+    "src/addons/HldsRun/ResourcePublishDate/_data/phrases.xml": "6728c5ea979d0a43c93fd001fd07330ee12aa1a0ce34dbc199da2decfd08b04c",
+    "src/addons/HldsRun/ResourcePublishDate/_translations/ru.xml": "697264875c11217e54c88dc1fc22eff3b9a0eabd7b55e164f406868f731317e3"
 }
