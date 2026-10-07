@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+  <!--
+    Master (English) phrases. These become xf_phrase rows with language_id = 0.
+
+    Russian translations live in /translations/ru.xml and are installed with:
+      php src/cmd.php hlds-run-rpd:import-translation 6
+    See docs/TRANSLATIONS.md.
+
+    Naming conventions, which are XenForo's, not ours:
+      option_group.<group_id>           - option group title
+      option_group_description.<group>  - option group description
+      option.<option_id>                - option title
+      option_explain.<option_id>        - option explain text
+
+    Ours:
+      hlds_run_rpd_reason_*             - why a date shift did or did not happen
+      mod_log.<content_type>_<action>   - moderator log entries
+      hlds_run_rpd_cli_*                - CLI command output
+  -->
+
+  <phrase title="option_group.hldsRunRpd" version_id="9000000" version_string="9000000"><![CDATA[Resource publish date]]></phrase>
+  <phrase title="option_group_description.hldsRunRpd" version_id="9000000" version_string="9000000"><![CDATA[When a moderator approves a resource that has been waiting in the approval queue, XenForo only changes its visibility - the resource keeps the date it was submitted with. As a result it can appear deep inside the "new resources" lists. These settings control moving the publish date to the moment of approval. Documentation and support: github.com/hlds-run/addon-resource-publish-date.]]></phrase>
+
+  <phrase title="option.hldsRunRpdScope" version_id="9000000" version_string="9000000"><![CDATA[When to shift dates]]></phrase>
+  <phrase title="option_explain.hldsRunRpdScope" version_id="9000000" version_string="9000000"><![CDATA[Decides whether an approval that is not the first one (unapprove, edit, moderate again, approve) is allowed to move the date again. "Only the first approval" is the safe choice: a resource that was published once will never jump back to the top of the lists.]]></phrase>
+  <phrase title="hlds_run_rpd_scope_first_approval" version_id="9000000" version_string="9000000"><![CDATA[Only the first approval]]></phrase>
+  <phrase title="hlds_run_rpd_scope_first_approval_explain" version_id="9000000" version_string="9000000"><![CDATA[Recommended. Detected from the `approve` entries in the moderator log. Requires moderator log rows to be retained - see Troubleshooting if a resource ever gets bumped twice.]]></phrase>
+  <phrase title="hlds_run_rpd_scope_every_approval" version_id="9000000" version_string="9000000"><![CDATA[Every approval]]></phrase>
+  <phrase title="hlds_run_rpd_scope_every_approval_explain" version_id="9000000" version_string="9000000"><![CDATA[Every single approval moves the date, including re-approvals. Useful if you deliberately want content to resurface whenever it passes moderation again, but be aware that a resource can be pushed to the top repeatedly.]]></phrase>
+
+  <phrase title="option.hldsRunRpdBumpResource" version_id="9000000" version_string="9000000"><![CDATA[Resources]]></phrase>
+  <phrase title="option_explain.hldsRunRpdBumpResource" version_id="9000000" version_string="9000000"><![CDATA[Moves the resource's `last_update` (and the post date of its newest visible update) to the approval time. `last_update` is the field the RM sorts by, so this is what actually makes a resource reappear in the new content lists.]]></phrase>
+
+  <phrase title="option.hldsRunRpdBumpThread" version_id="9000000" version_string="9000000"><![CDATA[Resource discussion threads]]></phrase>
+  <phrase title="option_explain.hldsRunRpdBumpThread" version_id="9000000" version_string="9000000"><![CDATA[Moves the dates of the discussion thread that XFRM creates for a resource, so the thread also shows up in "Latest posts" and "What's new". Only applies to threads with `discussion_type` set to `resource`, and only while the thread still has a single post.]]></phrase>
+
+  <phrase title="option.hldsRunRpdMinimumModerationMinutes" version_id="9000000" version_string="9000000"><![CDATA[Minimum time in the moderation queue]]></phrase>
+  <phrase title="option_explain.hldsRunRpdMinimumModerationMinutes" version_id="9000000" version_string="9000000"><![CDATA[Skip the shift if the content was submitted less than this many minutes ago. 0 (the default) means no limit. Raise it if approving almost instantly should not count as "publishing", and you would rather avoid the extra database write and the cache invalidation it causes.]]></phrase>
+
+  <phrase title="option.hldsRunRpdExcludedCategories" version_id="9000000" version_string="9000000"><![CDATA[Excluded resource categories]]></phrase>
+  <phrase title="option_explain.hldsRunRpdExcludedCategories" version_id="9000000" version_string="9000000"><![CDATA[Resources in these categories keep their original dates. Use it for categories that are curated on a long cycle and where sudden reordering would be unwanted. Ids of categories that no longer exist are removed automatically when you save.]]></phrase>
+  <phrase title="hlds_run_rpd_all_categories" version_id="9000000" version_string="9000000"><![CDATA[All categories]]></phrase>
+
+  <phrase title="option.hldsRunRpdLogToModeratorLog" version_id="9000000" version_string="9000000"><![CDATA[Record date shifts in the moderator log]]></phrase>
+  <phrase title="option_explain.hldsRunRpdLogToModeratorLog" version_id="9000000" version_string="9000000"><![CDATA[Adds a moderator log entry for every date shift, so the change is auditable next to the approval entry. The backfill command disables this by default because moderator log entries need an HTTP request in order to resolve the moderator's IP address.]]></phrase>
+
+  <phrase title="hlds_run_rpd_reason_bumped" version_id="9000000" version_string="9000000"><![CDATA[dates moved to the approval time]]></phrase>
+  <phrase title="hlds_run_rpd_reason_disabled_for_type" version_id="9000000" version_string="9000000"><![CDATA[shifting is switched off for this content type]]></phrase>
+  <phrase title="hlds_run_rpd_reason_category_excluded" version_id="9000000" version_string="9000000"><![CDATA[category is on the exclusion list]]></phrase>
+  <phrase title="hlds_run_rpd_reason_below_minimum_age" version_id="9000000" version_string="9000000"><![CDATA[spent less than the configured minimum time in the queue]]></phrase>
+  <phrase title="hlds_run_rpd_reason_not_first_approval" version_id="9000000" version_string="9000000"><![CDATA[not the first approval of this content]]></phrase>
+  <phrase title="hlds_run_rpd_reason_no_visible_update" version_id="9000000" version_string="9000000"><![CDATA[has no visible update to derive the date from]]></phrase>
+  <phrase title="hlds_run_rpd_reason_thread_not_a_resource" version_id="9000000" version_string="9000000"><![CDATA[thread is not a resource discussion thread]]></phrase>
+  <phrase title="hlds_run_rpd_reason_thread_has_replies" version_id="9000000" version_string="9000000"><![CDATA[thread already has replies, moving the first post would break post order]]></phrase>
+  <phrase title="hlds_run_rpd_reason_no_first_post" version_id="9000000" version_string="9000000"><![CDATA[thread has no first post]]></phrase>
+  <phrase title="hlds_run_rpd_reason_already_current" version_id="9000000" version_string="9000000"><![CDATA[stored date is already at or after the requested date]]></phrase>
+
+  <phrase title="mod_log.resource_publish_date_bump" version_id="9000000" version_string="9000000"><![CDATA[Resource publish date moved by add-on ({from} &rarr; {to})]]></phrase>
+  <phrase title="mod_log.thread_publish_date_bump" version_id="9000000" version_string="9000000"><![CDATA[Thread publish date moved by add-on ({from} &rarr; {to})]]></phrase>
+
+  <phrase title="hlds_run_rpd_cli_import_translation_description" version_id="9000000" version_string="9000000"><![CDATA[Imports one of this add-on's translations into a XenForo language.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_no_language" version_id="9000000" version_string="9000000"><![CDATA[No languages found in the database.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_language_missing" version_id="9000000" version_string="9000000"><![CDATA[Language {id} does not exist.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_missing_file" version_id="9000000" version_string="9000000"><![CDATA[Translation file {file} was not found in the add-on's translations directory.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_invalid_file" version_id="9000000" version_string="9000000"><![CDATA[Translation file {file} is not a readable phrases document.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_empty" version_id="9000000" version_string="9000000"><![CDATA[Language {title}: nothing to import.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_dry_run" version_id="9000000" version_string="9000000"><![CDATA[DRY RUN - {count} phrases would be imported into "{title}". Re-run without --dry-run to apply.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_done" version_id="9000000" version_string="9000000"><![CDATA[Language {title}: {count} phrases imported.]]></phrase>
+
+  <phrase title="hlds_run_rpd_cli_backfill_description" version_id="9000000" version_string="9000000"><![CDATA[Moves the publish date of already-approved resources to the moment they were approved, using the moderator log.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_dry_run" version_id="9000000" version_string="9000000"><![CDATA[DRY RUN - nothing was written. Re-run without --dry-run to apply.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_candidates" version_id="9000000" version_string="9000000"><![CDATA[{count} resources would be moved to their original approval date.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_summary" version_id="9000000" version_string="9000000"><![CDATA[Done. {moved} resources moved, {skipped} skipped.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_nothing" version_id="9000000" version_string="9000000"><![CDATA[Nothing to do: no visible resource has an approval date older than its current publish date.]]></phrase>
+</phrases>
