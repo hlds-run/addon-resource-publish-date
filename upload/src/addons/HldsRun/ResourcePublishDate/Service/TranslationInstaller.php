@@ -123,8 +123,13 @@ class TranslationInstaller extends AbstractService
                 return $language;
             }
 
+            // strlen(), not count(): $code is a string, and count() on one is a
+            // TypeError on PHP 8. That threw out of the regional-match check on
+            // every non-exact code, so a board whose language is ru-RU against a
+            // ru.xml matched nothing, and the install reported success having
+            // imported nothing.
             if ($regional === null
-                && substr($languageCode, 0, count($code) + 1) === $wanted . '-'
+                && substr($languageCode, 0, strlen($code) + 1) === $wanted . '-'
             ) {
                 $regional = $language;
             }
