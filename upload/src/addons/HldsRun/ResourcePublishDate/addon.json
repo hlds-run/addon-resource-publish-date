@@ -1,0 +1,22 @@
+{
+    "title": "Resource publish date",
+    "description": "Moves the publish date of a resource (and of its discussion thread) to the moment a moderator approves it, so that freshly published content actually surfaces as new.",
+    "version_id": 1000010,
+    "version_string": "1.0.0",
+    "dev": "wopox1337",
+    "dev_url": "https://github.com/wopox1337",
+    "faq_url": "https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/TROUBLESHOOTING.md",
+    "support_url": "https://github.com/hlds-run/addon-resource-publish-date/issues",
+    "extra_urls": {
+        "Source code and documentation": "https://github.com/hlds-run/addon-resource-publish-date",
+        "Report a bug": "https://github.com/hlds-run/addon-resource-publish-date/issues/new?template=bug_report.yml",
+        "Ask how to configure this": "https://github.com/hlds-run/addon-resource-publish-date/issues/new?template=config_help.yml",
+        "Suggest a feature": "https://github.com/hlds-run/addon-resource-publish-date/issues/new?template=feature_request.yml",
+        "Changelog": "https://github.com/hlds-run/addon-resource-publish-date/blob/main/CHANGELOG.md",
+        "Releases": "https://github.com/hlds-run/addon-resource-publish-date/releases"
+    },
+    "require": {
+        "XF": [2030010, "XenForo 2.3.0 or newer"],
+        "XFRM": [2030010, "XenForo Resource Manager 2.3.0 or newer"]
+    }
+}
