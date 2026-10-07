@@ -14,6 +14,8 @@
  * with nothing to run; the traits return immediately when no steps are declared.
  * This is the same skeleton `xf-addon:create` writes.
  *
+ * postInstall() is also overridden, and that one does have work to do - see below.
+ *
  * Do not add schema steps here without bumping version_id in addon.json and
  * updating CHANGELOG.md and docs/UPGRADE.md.
  */
@@ -31,4 +33,44 @@ class Setup extends AbstractSetup
     use StepRunnerInstallTrait;
     use StepRunnerUninstallTrait;
     use StepRunnerUpgradeTrait;
+
+    /**
+     * Import the shipped translations into every language the board already has.
+     *
+     * XenForo installs master phrases only, so without this the add-on is
+     * half-English on a Russian forum until somebody reads the manual and runs the
+     * importer by hand. That is exactly what happened.
+     *
+     * Two deliberate limits:
+     *
+     *  - install only, never postUpgrade. An upgrade re-import would overwrite
+     *    phrases an administrator has customised in Admin CP -> Phrases, with no
+     *    way to get the old wording back. The CLI is there for deliberate updates.
+     *  - only languages that already exist. A translation cannot create a language,
+     *    and matching ru.xml to a board that has no Russian row must do nothing
+     *    rather than invent one.
+     *
+     * Errors are logged and swallowed: a translation is never worth failing an
+     * install over.
+     */
+    public function postInstall(array &$stateChanges)
+    {
+        // \XF::service() rather than $this->service(): AbstractSetup inherits
+        // only InstallHelperTrait, which has no service() helper. The class_check
+        // pass in CI is what caught that.
+        $report = \XF::service(TranslationInstaller::class)->installForExistingLanguages();
+
+        foreach ($report as $entry) {
+            \XF::logInfo(sprintf(
+                '[ResourcePublishDate] Imported the %s translation (%d phrases) into "%s".',
+                $entry['code'],
+                $entry['count'],
+                $entry['language']
+            ));
+        }
+
+        if (!$report) {
+            \XF::logInfo('[ResourcePublishDate] No shipped translation matched a language on this board.');
+        }
+    }
 }
