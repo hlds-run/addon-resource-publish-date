@@ -64,6 +64,13 @@ class Setup extends AbstractSetup
         // is no logInfo, and the message lands in Admin CP -> Logs -> Error log.
         // Writing an informational line there is the lesser evil versus leaving the
         // administrator with no record of what happened to their translations.
+        //
+        // That is the best case, not the guaranteed one. logError() writes only
+        // when there is a web request: XF\Error::logException() builds the request
+        // state before it inserts, that throws under cmd.php, and the catch around
+        // it is empty. Verified on XF 2.3.7 - installing from the Admin CP logs
+        // this, installing from the CLI does not. So nothing downstream may treat
+        // these lines as the record of what happened; the phrases are.
         foreach ($report as $entry) {
             \XF::logError(sprintf(
                 '[ResourcePublishDate] Imported the %s translation (%d phrases) into "%s".',

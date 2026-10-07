@@ -36,13 +36,21 @@ Follow [INSTALL.md](INSTALL.md). Confirm:
       Russian row shows a shipped translation rather than `none`
 - [ ] **Admin CP → Phrases** for the Russian language shows Russian text for
       `option.hldsRunRpdEnabled`, without the CLI having been run - install
-      imports translations on its own
+      imports translations on its own. **This is the check that carries the whole
+      release.** Do not substitute the error-log line: installed from the Admin CP
+      it appears, installed from `cmd.php` XenForo discards it silently, so its
+      absence means nothing (see TRANSLATIONS.md, "How to tell whether it worked")
 - [ ] `php src/cmd.php hlds-run-rpd:import-translation <id> --dry-run` reports a
       phrase count equal to the master count
 - [ ] `php src/cmd.php hlds-run-rpd:backfill --dry-run` runs and writes nothing
 
 The last three run commands that only fire on a forum, and one of them broke
 `php src/cmd.php` for *every* command on the board. Run all three.
+
+Install from a **clean** state to run this section: uninstall the add-on, delete
+`src/addons/HldsRun/`, and install from the built archive. Reinstalling over an
+existing install leaves the phrases from the previous install in place, so the
+phrase check passes for the wrong reason.
 
 ## 3. The core scenario: a resource moderated, then approved
 

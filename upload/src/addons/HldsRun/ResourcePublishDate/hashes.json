@@ -7,7 +7,7 @@
     "src/addons/HldsRun/ResourcePublishDate/Service/BumpResult.php": "f17d5eafea1413b5a9c10f1d41325823e9836898e772afa21346f77e509a4f19",
     "src/addons/HldsRun/ResourcePublishDate/Service/PublishDateManager.php": "983cb11276012c86e5553a38522109685722ca5b37e842f2062e78f12c73d150",
     "src/addons/HldsRun/ResourcePublishDate/Service/TranslationInstaller.php": "38d5c89779e1f90acb7c7dfda10a12881e1ecf085d451668f48581d3e60eccbd",
-    "src/addons/HldsRun/ResourcePublishDate/Setup.php": "9e86ba28c20f8b866487ab466fd2139cc0902ad8820c89aa7ca4a9196acfe931",
+    "src/addons/HldsRun/ResourcePublishDate/Setup.php": "2a970ffe04caabe2ffbf039e45fcd4e708a54b0fe52ba3f535bb0a8150e01c75",
     "src/addons/HldsRun/ResourcePublishDate/XF/Service/Thread/ApproverService.php": "a3c7f773383c7d60bdbe74193d9f8a65ec49912fe30f00c15dc3c204c81ad64e",
     "src/addons/HldsRun/ResourcePublishDate/XFRM/Service/ResourceItem/Approve.php": "d75036d810a9be5011ed75fcb02c187c6cebbeade2861ba66849b2584ca842d0",
     "src/addons/HldsRun/ResourcePublishDate/_data/class_extensions.xml": "3afd846516d0b2cf91dcb1033567829b72ebf51fc32bad7caf5b38d5b74f3305",

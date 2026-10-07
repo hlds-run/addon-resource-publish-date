@@ -90,8 +90,20 @@ expected with no "unexpected content" warnings.
 
 **Nothing to do.** Since 1.1.0 every shipped translation is imported
 automatically when the add-on is installed, into each board language it matches.
-Check **Admin CP -> Logs -> Error log** for what was imported; if the board has no
-matching language, it says so and the add-on stays English.
+Check **Admin CP -> Phrases** for the language to see whether it took: the values
+there are the proof, not a log line.
+
+The import writes a line to **Admin CP -> Logs -> Error log** saying what it
+imported, because XenForo has no info-level log and `XF::logError()` is the only
+entry point besides `logException()`. That line only appears when the install
+ran in a web request, which is what installing through the Admin CP does. Install
+from the command line and XenForo silently drops it - `XF\Error::logException()`
+collects request data before inserting, and that throws where there is no
+request, which it catches and discards. Verified on XF 2.3.7: the same
+`logError()` call writes from the Admin CP and writes nothing from `cmd.php`,
+with and without the force flag.
+
+So the absence of the line means nothing either way. Check the phrases.
 
 If you upgraded from an earlier version, the translations installed back then are
 still in place. To re-import after a wording change, or to add a language the

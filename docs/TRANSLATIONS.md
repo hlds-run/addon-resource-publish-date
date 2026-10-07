@@ -54,23 +54,36 @@ If a board carries both `ru` and `ru-RU`, the exact match wins.
 
 Since 1.1.0 every shipped translation is imported into each board language it
 matches, as part of installing the add-on. `Setup::postInstall()` calls
-`TranslationInstaller::installForExistingLanguages()`; what was imported is written
-to **Admin CP -> Logs -> Error log**. XenForo has no info-level log -
-`XF::logError()` is the only entry point it exposes besides `logException()` and
-the two fatal handlers - so a note about translations is written there rather than
-nowhere.
+`TranslationInstaller::installForExistingLanguages()`.
 
 Two deliberate limits:
 
 * **Languages must already exist.** A translation cannot create one, and matching
   `ru.xml` against a board with no Russian row must do nothing rather than invent
-  a language. That board gets English, and the log says so.
+  a language. That board gets English.
 * **Install only, never on upgrade.** An upgrade re-import would overwrite phrases
   an administrator has customised in Admin CP -> Phrases, with no way to recover the
   old wording. Use `hlds-run-rpd:import-translation` to update deliberately.
 
-A translation can never fail an install: a broken file is logged and the remaining
-languages are still imported.
+A translation cannot fail an install: each language's lookup and import run inside
+one `try`, the exception is caught, and the remaining languages are still imported.
+That was true from 1.1.1; 1.1.0's notes claimed it and the code did not do it.
+
+## How to tell whether it worked
+
+Look at **Admin CP -> Phrases** for the language. The values there are the proof.
+
+Do not rely on the log line. `postInstall()` writes what it imported with
+`XF::logError()`, because XenForo has no info-level log and that is the only entry
+point besides `logException()`, but the line only lands when the install ran in a
+**web request** - which is what installing through the Admin CP does. Install from
+`cmd.php` and XenForo discards it: `XF\Error::logException()` builds the request
+state before it inserts, that throws where there is no request, and the `catch`
+around it is empty. Verified on XF 2.3.7 - the identical `logError()` call writes
+from the Admin CP and writes nothing from the CLI, with and without `$forceLog`.
+
+The consequence worth remembering: **an absent log line proves nothing**, in
+either direction. Check the phrases.
 
 ## Installing a translation by hand
 
