@@ -70,4 +70,10 @@
   <phrase title="hlds_run_rpd_cli_import_translation_empty" version_id="1000010" version_string="1.0.0"><![CDATA[Language {title}: nothing to import.]]></phrase>
   <phrase title="hlds_run_rpd_cli_import_translation_dry_run" version_id="1000010" version_string="1.0.0"><![CDATA[DRY RUN - {count} phrases would be imported into "{title}". Re-run without --dry-run to apply.]]></phrase>
   <phrase title="hlds_run_rpd_cli_import_translation_done" version_id="1000010" version_string="1.0.0"><![CDATA[Language {title}: {count} phrases imported.]]></phrase>
+
+  <phrase title="hlds_run_rpd_cli_backfill_description" version_id="1000010" version_string="1.0.0"><![CDATA[Moves the publish date of already-approved resources to the moment they were approved, using the moderator log.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_dry_run" version_id="1000010" version_string="1.0.0"><![CDATA[DRY RUN - nothing was written. Re-run without --dry-run to apply.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_candidates" version_id="1000010" version_string="1.0.0"><![CDATA[{count} resources would be moved to their original approval date.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_summary" version_id="1000010" version_string="1.0.0"><![CDATA[Done. {moved} resources moved, {skipped} skipped.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_backfill_nothing" version_id="1000010" version_string="1.0.0"><![CDATA[Nothing to do: no visible resource has an approval date older than its current publish date.]]></phrase>
 </phrases>
