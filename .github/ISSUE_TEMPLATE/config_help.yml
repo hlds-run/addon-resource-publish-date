@@ -1,0 +1,47 @@
+name: Configuration help
+description: "How do I...? What should this setting be?"
+title: "[Question] "
+labels: ["type: question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This template is for "how do I configure this" - not for something that
+        is broken. If it does not work as documented, use the bug report
+        template instead.
+
+        [docs/CONFIGURATION.md](https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/CONFIGURATION.md)
+        documents every setting and when each one is the wrong choice.
+  - type: textarea
+    id: question
+    attributes:
+      label: What are you trying to achieve?
+      description: Describe the outcome you want, not the setting you found.
+      placeholder: |
+        I curate one category by hand over a long cycle. I do not want resources
+        in it jumping back to the top of the list when they are approved.
+    validations:
+      required: true
+  - type: textarea
+    id: forum
+    attributes:
+      label: Your setup
+      description: |
+        What makes your forum different from a default install: resources per
+        month, whether you moderate everything, how long content usually waits
+        in the queue, and whether you have a discussion forum on your resource
+        categories.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: considered
+    attributes:
+      label: What you have already tried
+      description: |
+        Including reading the documentation. If a setting seemed like it should
+        work but did not, say which one and what you expected - that usually
+        points at a missing option.
+      render: markdown
+    validations:
+      required: true

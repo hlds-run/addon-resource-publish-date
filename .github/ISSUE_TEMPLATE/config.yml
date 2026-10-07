@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Troubleshooting
+    url: https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/TROUBLESHOOTING.md
+    about: "Nothing happened, it happened twice, or it reverted. Starts with SQL that distinguishes the causes."
+  - name: Configuration
+    url: https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/CONFIGURATION.md
+    about: Every setting, and when each one is the wrong choice.
+  - name: Behaviour
+    url: https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/BEHAVIOR.md
+    about: Why the problem exists and which fields are involved. Read this before proposing a change.
+  - name: Testing checklist
+    url: https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/TESTING.md
+    about: How to verify the add-on on a staging forum before reporting anything.

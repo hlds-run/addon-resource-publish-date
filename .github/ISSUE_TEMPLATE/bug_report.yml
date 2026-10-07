@@ -1,0 +1,137 @@
+name: Bug report
+description: Something does not work as documented
+title: "[Bug] "
+labels: ["type: bug", "needs: info"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report.
+
+        Most reports of "nothing happened" are answered by
+        [docs/TROUBLESHOOTING.md](https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/TROUBLESHOOTING.md),
+        which has the SQL needed to tell the causes apart. Please check it first -
+        it may save a round trip.
+
+        If you are reporting something else, fill this in as fully as you can.
+  - type: checkboxes
+    attributes:
+      label: Before reporting
+      options:
+        - label: I read Troubleshooting and my case is not covered there
+          required: false
+        - label: I am not asking for custom development
+          required: false
+        - label: I can reproduce this on a test forum, not only on production
+          required: false
+  - type: dropdown
+    id: version
+    attributes:
+      label: Add-on version
+      description: Shown in Admin CP -> Add-ons -> Installed add-ons.
+      options:
+        - 1.0.0
+        - Other (describe below)
+      validations:
+        required: true
+    validations:
+      required: true
+  - type: dropdown
+    id: xenforo
+    attributes:
+      label: XenForo version
+      options:
+        - 2.3.2
+        - 2.3.0 / 2.3.1
+        - Other 2.3.x
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: xfrm
+    attributes:
+      label: XenForo Resource Manager version
+      options:
+        - 2.3.2
+        - Other 2.3.x
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: php
+    attributes:
+      label: PHP version
+      options:
+        - 7.4
+        - 8.0
+        - 8.1
+        - 8.2
+        - 8.3 or newer
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw instead.
+      placeholder: |
+        1. Submitted a resource in a category with "Always moderate" enabled
+        2. Approved it from Admin CP -> Moderation queue
+        3. Expected the resource to appear in "Latest resources"
+        4. Instead it stayed buried and the moderator log had no entry
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant settings
+      description: |
+        Admin CP -> Options -> Resource publish date. List any that are not at
+        their defaults. If you changed them while investigating, say so.
+      render: markdown
+      placeholder: |
+        - Shift publish dates when content is approved: on
+        - When to shift dates: Only the first approval
+        - Excluded resource categories: (none)
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error log and moderator log
+      description: |
+        Anything from Admin CP -> Logs -> Error log and the moderator log entries
+        for the affected resource. Paste the error log entry verbatim; do not
+        paraphrase it.
+      render: text
+  - type: textarea
+    id: sql
+    attributes:
+      label: Database state
+      description: |
+        Helpful when the date moved but then moved back, or did not move at all.
+        Replace the ids with yours.
+      render: sql
+      placeholder: |
+        SELECT resource_id, resource_state, resource_date, last_update
+        FROM xf_rm_resource
+        WHERE resource_id = 123;
+
+        SELECT resource_update_id, message_state, post_date
+        FROM xf_rm_resource_update
+        WHERE resource_id = 123
+        ORDER BY post_date DESC;
+  - type: textarea
+    id: addons
+    attributes:
+      label: Other add-ons
+      description: |
+        Especially anything that edits post dates, thread dates or approval flow.
+        Conflicts here are a common cause of this add-on appearing to do nothing.
+      render: markdown
+  - type: checkboxes
+    attributes:
+      label: Security
+      options:
+        - label: I have removed passwords, tokens, API keys and e-mail addresses from anything I pasted above
+          required: true
