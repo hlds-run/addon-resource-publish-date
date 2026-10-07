@@ -60,8 +60,12 @@ class Setup extends AbstractSetup
         // pass in CI is what caught that.
         $report = \XF::service(TranslationInstaller::class)->installForExistingLanguages();
 
+        // \XF::logError() is the only logging entry point XenForo exposes - there
+        // is no logInfo, and the message lands in Admin CP -> Logs -> Error log.
+        // Writing an informational line there is the lesser evil versus leaving the
+        // administrator with no record of what happened to their translations.
         foreach ($report as $entry) {
-            \XF::logInfo(sprintf(
+            \XF::logError(sprintf(
                 '[ResourcePublishDate] Imported the %s translation (%d phrases) into "%s".',
                 $entry['code'],
                 $entry['count'],
@@ -70,7 +74,7 @@ class Setup extends AbstractSetup
         }
 
         if (!$report) {
-            \XF::logInfo('[ResourcePublishDate] No shipped translation matched a language on this board.');
+            \XF::logError('[ResourcePublishDate] No shipped translation matched a language on this board.');
         }
     }
 }
