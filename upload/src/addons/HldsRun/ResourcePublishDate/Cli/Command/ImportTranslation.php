@@ -4,6 +4,7 @@ namespace HldsRun\ResourcePublishDate\Cli\Command;
 
 use HldsRun\ResourcePublishDate\PublishDateAddOn;
 use HldsRun\ResourcePublishDate\Service\TranslationInstaller;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,7 +35,9 @@ class ImportTranslation extends AbstractCommand
     {
         $this
             ->setName('hlds-run-rpd:import-translation')
-            ->setDescription(\XF::phrase('hlds_run_rpd_cli_import_translation_description'))
+            // A literal, not \XF::phrase() - the reason is long and load-bearing,
+            // so it is written out once, in BackfillPublishDates.
+            ->setDescription('Imports one of this add-on\'s translations into a XenForo language.')
             ->addArgument(
                 'language_id',
                 InputArgument::OPTIONAL,
@@ -200,7 +203,14 @@ class ImportTranslation extends AbstractCommand
             ];
         }
 
-        $output->table(['ID', 'Language', 'Code', 'Shipped translation'], $rows);
+        // Table, not $output->table(): that method is on the Table helper, not on
+        // OutputInterface. OutputInterface::table() does not exist and calling it
+        // fatals.
+        (new Table($output))
+            ->setHeaders(['ID', 'Language', 'Code', 'Shipped translation'])
+            ->setRows($rows)
+            ->render();
+
         $output->writeln(
             'Re-run with a language ID, for example: '
             . '<info>php src/cmd.php hlds-run-rpd:import-translation ' . $rows[0][0] . '</info>'

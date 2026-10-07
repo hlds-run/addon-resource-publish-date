@@ -41,7 +41,19 @@ class BackfillPublishDates extends AbstractCommand
     {
         $this
             ->setName('hlds-run-rpd:backfill')
-            ->setDescription(\XF::phrase('hlds_run_rpd_cli_backfill_description'))
+            // A literal, not \XF::phrase(): configure() runs while Runner is still
+            // building the command list, before any XF app exists. Calling
+            // \XF::phrase() here creates an XF\App implicitly, and the Runner then
+            // fails to set up its own XF\Cli\App - "A second app cannot be setup" -
+            // which takes down every CLI command on the board, not just this one.
+            // Core's own commands describe themselves in English for the same
+            // reason, and so does every XenForo add-on that ships a working CLI.
+            //
+            // The hlds_run_rpd_cli_*_description phrases stay in _data/phrases.xml
+            // and in ru.xml: deleting a shipped phrase is a data change, and
+            // something may still want to render that text. Nothing calls them
+            // any more, which is why no check complains about their presence.
+            ->setDescription('Moves the publish date of already-approved resources to the moment they were approved, using the moderator log.')
             ->addOption(
                 'dry-run',
                 null,
