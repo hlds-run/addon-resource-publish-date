@@ -553,6 +553,111 @@ function readCode(string $source): string
 	return (string) $withoutStrings;
 }
 
+// ---------------------------------------------------------------- static surface
+
+// Every one of this add-on's four runtime bugs was a call to a method that does
+// not exist: $this->app(), $this->em()->findAll(), \XF::logInfo() and
+// $this->service() from Setup. The first two are covered above; this covers the
+// third. Method list extracted from src/XF.php in XenForo 2.3.2 - 90 public static
+// methods.
+eval(<<<'PHP'
+namespace HldsRun\ResourcePublishDate\Tools;
+
+class XfStaticSurface
+{
+	public static function accessToken() {}
+	public static function apiKey() {}
+	public static function app() {}
+	public static function arrayValidator() {}
+	public static function asPreRegActionUser() {}
+	public static function asPreRegActionUserIfNeeded() {}
+	public static function asVisitor() {}
+	public static function bootstrap() {}
+	public static function canPerformPreRegAction() {}
+	public static function canonicalizeUrl() {}
+	public static function classToString() {}
+	public static function cleanArrayStrings() {}
+	public static function cleanString() {}
+	public static function config() {}
+	public static function convertToAbsoluteUrl() {}
+	public static function createAliasForClass() {}
+	public static function db() {}
+	public static function dequeueRunOnce() {}
+	public static function dump() {}
+	public static function dumpSimple() {}
+	public static function dumpToFile() {}
+	public static function em() {}
+	public static function escapeString() {}
+	public static function extendClass() {}
+	public static function extension() {}
+	public static function finder() {}
+	public static function fire() {}
+	public static function fs() {}
+	public static function generateRandomString() {}
+	public static function getAddOnDirectory() {}
+	public static function getAliasForClass() {}
+	public static function getAliasableNamespaces() {}
+	public static function getAvailableMemory() {}
+	public static function getClassForAlias() {}
+	public static function getCopyrightHtml() {}
+	public static function getCopyrightHtmlAcp() {}
+	public static function getMemoryLimit() {}
+	public static function getRootDirectory() {}
+	public static function getSourceDirectory() {}
+	public static function getUnaliasableNamespaces() {}
+	public static function getVendorDirectory() {}
+	public static function handleException() {}
+	public static function handleFatalError() {}
+	public static function handlePhpError() {}
+	public static function helper() {}
+	public static function increaseMemoryLimit() {}
+	public static function isAddOnActive() {}
+	public static function isApiBypassingPermissions() {}
+	public static function isApiCheckingPermissions() {}
+	public static function isPreEscaped() {}
+	public static function isPushUsable() {}
+	public static function language() {}
+	public static function logError() {}
+	public static function logException() {}
+	public static function mailer() {}
+	public static function options() {}
+	public static function permissionCache() {}
+	public static function phrase() {}
+	public static function phraseDeferred() {}
+	public static function phrasedException() {}
+	public static function preRegActionUser() {}
+	public static function registerComposerAutoloadData() {}
+	public static function registerComposerAutoloadDir() {}
+	public static function registry() {}
+	public static function renderPlainString() {}
+	public static function repository() {}
+	public static function requestUrlMatchesApi() {}
+	public static function runApp() {}
+	public static function runLater() {}
+	public static function runOnce() {}
+	public static function service() {}
+	public static function session() {}
+	public static function setAccessToken() {}
+	public static function setApiBypassPermissions() {}
+	public static function setApiKey() {}
+	public static function setApp() {}
+	public static function setLanguage() {}
+	public static function setMemoryLimit() {}
+	public static function setVisitor() {}
+	public static function setupApp() {}
+	public static function setupClassAliases() {}
+	public static function standardizeEnvironment() {}
+	public static function start() {}
+	public static function startAutoloader() {}
+	public static function startSystem() {}
+	public static function string() {}
+	public static function stringToClass() {}
+	public static function triggerRunOnce() {}
+	public static function updateTime() {}
+	public static function visitor() {}
+}
+PHP);
+
 // ------------------------------------------------------------------- our files
 
 $files = [];
@@ -629,6 +734,17 @@ foreach ($files as $file) {
 						$stubClass
 					);
 				}
+			}
+		}
+
+		// Static calls on the XF facade. \XF::logInfo() does not exist; there is
+		// logError, logException, handleFatalError and handlePhpError, and nothing
+		// else. The check reads plausibly and only fails when the line runs.
+		preg_match_all('/\\XF::([a-zA-Z_]\\w*)\\s*\\(/', $code, $staticCalls);
+		$xfSurface = new \ReflectionClass('HldsRun\\ResourcePublishDate\\Tools\\XfStaticSurface');
+		foreach (array_unique($staticCalls[1]) as $staticCall) {
+			if (!$xfSurface->hasMethod($staticCall)) {
+				$errors[] = "$relative: \\XF::$staticCall() - no such static method on XF";
 			}
 		}
 
