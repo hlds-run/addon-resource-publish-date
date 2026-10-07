@@ -3,13 +3,13 @@
 namespace HldsRun\ResourcePublishDate\Cli\Command;
 
 use HldsRun\ResourcePublishDate\PublishDateAddOn;
+use HldsRun\ResourcePublishDate\Service\TranslationInstaller;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use XF\Cli\Command\AbstractCommand;
 use XF\Entity\Language;
-use XF\Service\Phrase\ImportService;
 
 /**
  * Installs one of the add-on's translations into a XenForo language.
@@ -82,6 +82,9 @@ class ImportTranslation extends AbstractCommand
         }
 
         $fileName = (string) $input->getOption('file');
+        /** @var TranslationInstaller $installer */
+        $installer = \XF::service(TranslationInstaller::class);
+
         $path = PublishDateAddOn::getTranslationPath($fileName);
 
         if ($path === null || !is_file($path)) {
@@ -124,9 +127,10 @@ class ImportTranslation extends AbstractCommand
             return 0;
         }
 
-        /** @var ImportService $importService */
-        $importService = \XF::service(ImportService::class, $language);
-        $importService->importFromXml($xml, PublishDateAddOn::ADDON_ID);
+        // The shared service does the write, so the automatic install-time import
+        // and this command cannot drift into two implementations of "which file
+        // belongs to which language".
+        $installer->install($fileName, $language);
 
         $output->writeln(\XF::phrase('hlds_run_rpd_cli_import_translation_done', [
             'count' => $count,
@@ -170,12 +174,33 @@ class ImportTranslation extends AbstractCommand
             return;
         }
 
+        // The shipped column is the point of this listing. The most common reason
+        // somebody runs this command is that no translation appeared after install,
+        // and the answer is usually visible here: the language exists, but the
+        // board calls it something no shipped file matches.
+        /** @var TranslationInstaller $installer */
+        $installer = \XF::service(TranslationInstaller::class);
+        $shipped = $installer->getAvailableCodes();
+
         $rows = [];
         foreach ($languages as $language) {
-            $rows[] = [$language->language_id, $language->title, $language->language_code ?: '-'];
+            $match = null;
+            foreach ($shipped as $code) {
+                if ($installer->findLanguageForCode($code) === $language) {
+                    $match = $code . '.xml';
+                    break;
+                }
+            }
+
+            $rows[] = [
+                $language->language_id,
+                $language->title,
+                $language->language_code ?: '-',
+                $match ?: 'none',
+            ];
         }
 
-        $output->table(['ID', 'Language', 'Code'], $rows);
+        $output->table(['ID', 'Language', 'Code', 'Shipped translation'], $rows);
         $output->writeln(
             'Re-run with a language ID, for example: '
             . '<info>php src/cmd.php hlds-run-rpd:import-translation ' . $rows[0][0] . '</info>'
