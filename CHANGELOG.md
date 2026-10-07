@@ -18,6 +18,48 @@ Nothing yet. Add entries here as you go, one line per user-visible change.
 
 ---
 
+## [1.1.2] - 2026-10-07
+
+Fixes a fourth fatal error on the install path, again found on the test forum.
+
+### Fixed
+
+- **`Call to undefined method XF::logInfo()`**
+
+  `Setup::postInstall()` wrote its summary with `\XF::logInfo()`. XenForo exposes
+  no such method: `XF::logError()` is the only logging entry point besides
+  `logException()` and the two fatal handlers. Now `logError()`.
+
+  It lands in Admin CP -> Logs -> Error log, which is also where 1.1.0's
+  documentation wrongly said "Admin log". There is no info-level log to write to,
+  and a note about translations is worth more in the error log than nowhere.
+
+### Added
+
+- `tools/class_check.php` now verifies **static** calls on the XF facade -
+  `\XF::foo()` against the 90 public static methods of `src/XF.php` in 2.3.2.
+
+  The previous three passes covered `$this->`, chains off a helper's return, and
+  chained calls. None of them looked at a static call, which is why this one got
+  through while the others were caught.
+
+### Summary of the four runtime bugs
+
+All four were calls to methods that read plausibly and do not exist, all found on
+a live board rather than in CI, all on the approval or install path:
+
+| Bug | Shape | Now covered by |
+|---|---|---|
+| `PublishDateManager::app()` | `$this->method()` | direct `$this->` pass |
+| `em()->findAll()` | chained call | chained-call pass |
+| `Setup::service()` | `$this->method()`, wrong parent | direct `$this->` pass |
+| `XF::logInfo()` | static call | static-call pass |
+
+None of them is reachable by `php -l`, and only the last three by running the add-on.
+That is the argument for the class-loading check existing at all.
+
+---
+
 ## [1.1.1] - 2026-10-07
 
 Fixes a fatal error in the automatic translation import, found by installing 1.1.0
@@ -260,6 +302,7 @@ fails if the two key sets ever drift apart in either direction.
   forum without the three step-runner traits that `XF\AddOn\AbstractSetup`
   requires, and reported success on install.
 
+[1.1.2]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.1.2
 [1.1.1]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.1.1
 [1.1.0]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.1.0
 [1.0.1]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.0.1
