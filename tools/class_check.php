@@ -180,39 +180,6 @@ class XFCP_ApproverService extends \XF\Service\AbstractService
 }
 PHP);
 
-/**
- * Source with comments and string literals removed.
- *
- * Without this the $this-> pass matches itself: a comment explaining "do not call
- * $this->app() here" is a match, and the check would report a method that the file
- * only ever mentions. The tokenizer is exact; the regex fallback covers the CLI
- * builds that ship without ext-tokenizer.
- */
-function readCode(string $source): string
-{
-	if (class_exists('\\token_get_all')) {
-		$out = '';
-		foreach (token_get_all($source) as $token) {
-			if (is_array($token)) {
-				// Keep code tokens; drop comments, and the literal contents of
-				// strings so a heredoc example cannot be mistaken for a call.
-				if ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) {
-					continue;
-				}
-				$out .= $token[0] === T_CONSTANT_ENCAPSED_STRING ? "''" : $token[1];
-			} else {
-				$out .= $token;
-			}
-		}
-		return $out;
-	}
-
-	$withoutStrings = preg_replace(['/\'(?:\\\\.|[^\'\\\\])*\'/s', '/"(?:\\\\.|[^"\\\\])*"/s'], "''", $source);
-	$withoutStrings = preg_replace(['#//[^\n\r]*#', '#/\*.*?\*/#s'], '', $withoutStrings);
-
-	return (string) $withoutStrings;
-}
-
 // ------------------------------------------------------------------- our files
 
 $files = [];
@@ -269,11 +236,7 @@ foreach ($files as $file) {
 			continue;
 		}
 
-		preg_match_all(
-			'/\$this->([a-zA-Z_]\w*)\s*\(/',
-			readCode((string) file_get_contents($file)),
-			$calls
-		);
+		preg_match_all('/\$this->([a-zA-Z_]\w*)\s*\(/', (string) file_get_contents($file), $calls);
 		foreach (array_unique($calls[1]) as $method) {
 			if (!$reflection->hasMethod($method)) {
 				$errors[] = "$relative: $class::\$this->$method() - no such method, and no __call() to catch it";
@@ -290,7 +253,6 @@ $expected = [
 	ADDON_NAMESPACE . '\\Option\\ExcludedCategories',
 	ADDON_NAMESPACE . '\\Service\\BumpResult',
 	ADDON_NAMESPACE . '\\Service\\PublishDateManager',
-	ADDON_NAMESPACE . '\\Service\\TranslationInstaller',
 	ADDON_NAMESPACE . '\\Cli\\Command\\BackfillPublishDates',
 	ADDON_NAMESPACE . '\\Cli\\Command\\ImportTranslation',
 	ADDON_NAMESPACE . '\\XFRM\\Service\\ResourceItem\\Approve',

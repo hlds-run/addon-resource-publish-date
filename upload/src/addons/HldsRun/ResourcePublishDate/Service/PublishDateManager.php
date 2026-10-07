@@ -61,12 +61,12 @@ class PublishDateManager extends AbstractService
 
     public function isEnabled(): bool
     {
-        return (bool) $this->app()->options()->hldsRunRpdEnabled;
+        return (bool) $this->app->options()->hldsRunRpdEnabled;
     }
 
     public function getScope(): string
     {
-        $scope = (string) $this->app()->options()->hldsRunRpdScope;
+        $scope = (string) $this->app->options()->hldsRunRpdScope;
 
         return $scope === self::SCOPE_EVERY_APPROVAL
             ? self::SCOPE_EVERY_APPROVAL
@@ -75,12 +75,12 @@ class PublishDateManager extends AbstractService
 
     public function shouldBumpResources(): bool
     {
-        return (bool) $this->app()->options()->hldsRunRpdBumpResource;
+        return (bool) $this->app->options()->hldsRunRpdBumpResource;
     }
 
     public function shouldBumpThreads(): bool
     {
-        return (bool) $this->app()->options()->hldsRunRpdBumpThread;
+        return (bool) $this->app->options()->hldsRunRpdBumpThread;
     }
 
     public function isLoggingEnabled(): bool
@@ -89,7 +89,7 @@ class PublishDateManager extends AbstractService
             return $this->loggingOverride;
         }
 
-        return (bool) $this->app()->options()->hldsRunRpdLogToModeratorLog;
+        return (bool) $this->app->options()->hldsRunRpdLogToModeratorLog;
     }
 
     /**
@@ -111,7 +111,7 @@ class PublishDateManager extends AbstractService
      */
     public function getExcludedCategoryIds(): array
     {
-        $ids = $this->app()->options()->hldsRunRpdExcludedCategories;
+        $ids = $this->app->options()->hldsRunRpdExcludedCategories;
 
         if (!is_array($ids)) {
             return [];
@@ -131,7 +131,7 @@ class PublishDateManager extends AbstractService
 
     public function getMinimumModerationSeconds(): int
     {
-        $minutes = (int) $this->app()->options()->hldsRunRpdMinimumModerationMinutes;
+        $minutes = (int) $this->app->options()->hldsRunRpdMinimumModerationMinutes;
 
         return max(0, $minutes) * 60;
     }
