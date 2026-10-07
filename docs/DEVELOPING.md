@@ -207,6 +207,10 @@ characters the sanitiser removes.
 
 ## Building a release
 
+For the full procedure - including how to ship a bug fix, what each check
+catches, and the four runtime bugs that shaped this repository - see
+[RELEASING.md](RELEASING.md). This section is the mechanical part.
+
 ```bash
 # 1. bump the version (also updates version_id/version_string on every phrase)
 php src/cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate

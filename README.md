@@ -29,6 +29,7 @@ Read in this order; each file answers one question.
 | [docs/CONFIGURATION.md](docs/CONFIGURATION.md) | What does each setting do, and what are the trade-offs? |
 | [docs/TRANSLATIONS.md](docs/TRANSLATIONS.md) | How does multilingual support work here, and how do I add a language? |
 | [docs/DEVELOPING.md](docs/DEVELOPING.md) | Repository conventions, code style, how to build a release, how to add a feature |
+| [docs/RELEASING.md](docs/RELEASING.md) | How to ship a fix and cut a release, what each check catches, and the mistakes already made here |
 | [docs/UPGRADE.md](docs/UPGRADE.md) | How to update the add-on, how to check whether XenForo broke it |
 | [docs/TESTING.md](docs/TESTING.md) | How to verify the add-on on a test forum before touching production |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Why did nothing happen? Why did it happen twice? How do I undo it? |
