@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<options>
+  <!--
+    option_id prefix: hldsRunRpd (HldsRun / Resource Publish Date).
+
+    Prefixed rather than plain `enabled`/`scope` because add-on options share one
+    flat table with core and every other add-on; a collision silently steals the
+    setting from whoever installed second.
+
+    Defaults are deliberately conservative: the add-on only touches content when
+    it is genuinely being published for the first time.
+  -->
+
+  <option option_id="hldsRunRpdEnabled" edit_format="onoff" data_type="boolean" advanced="0">
+    <default_value>1</default_value>
+    <relation group_id="hldsRunRpd" display_order="10"/>
+  </option>
+
+  <option option_id="hldsRunRpdScope" edit_format="radio" data_type="string" advanced="0">
+    <default_value>first</default_value>
+    <edit_format_params>first={{ phrase('hlds_run_rpd_scope_first_approval') }}
+every={{ phrase('hlds_run_rpd_scope_every_approval') }}</edit_format_params>
+    <relation group_id="hldsRunRpd" display_order="20"/>
+  </option>
+
+  <option option_id="hldsRunRpdBumpResource" edit_format="onoff" data_type="boolean" advanced="0">
+    <default_value>1</default_value>
+    <relation group_id="hldsRunRpd" display_order="30"/>
+  </option>
+
+  <option option_id="hldsRunRpdBumpThread" edit_format="onoff" data_type="boolean" advanced="0">
+    <default_value>1</default_value>
+    <relation group_id="hldsRunRpd" display_order="40"/>
+  </option>
+
+  <option option_id="hldsRunRpdMinimumModerationMinutes" edit_format="spinbox" data_type="unsigned_integer" advanced="1">
+    <default_value>0</default_value>
+    <edit_format_params>min=0
+max=43200
+units={{ phrase('units_minutes') }}</edit_format_params>
+    <relation group_id="hldsRunRpd" display_order="50"/>
+  </option>
+
+  <option option_id="hldsRunRpdExcludedCategories" edit_format="callback" data_type="array" validation_class="HldsRun\ResourcePublishDate\Option\ExcludedCategories" validation_method="verifyOption" advanced="1">
+    <default_value>[]</default_value>
+    <edit_format_params>HldsRun\ResourcePublishDate\Option\ExcludedCategories::renderCheckbox</edit_format_params>
+    <sub_options>*</sub_options>
+    <relation group_id="hldsRunRpd" display_order="60"/>
+  </option>
+
+  <option option_id="hldsRunRpdLogToModeratorLog" edit_format="onoff" data_type="boolean" advanced="1">
+    <default_value>1</default_value>
+    <relation group_id="hldsRunRpd" display_order="70"/>
+  </option>
+</options>

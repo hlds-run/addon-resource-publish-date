@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<option_groups>
+  <!--
+    Sits directly after the Resource Manager group (display_order 2000) so the
+    settings are found next to the RM options they affect.
+
+    Group titles come from the `option_group.<group_id>` and
+    `option_group_description.<group_id>` phrases - see _data/phrases.xml.
+  -->
+  <group group_id="hldsRunRpd" icon="fa-calendar-check-o" display_order="2010" debug_only="0"/>
+</option_groups>
