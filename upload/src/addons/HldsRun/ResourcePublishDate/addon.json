@@ -1,8 +1,8 @@
 {
     "title": "Resource publish date",
     "description": "Moves the publish date of a resource (and of its discussion thread) to the moment a moderator approves it, so that freshly published content actually surfaces as new.",
-    "version_id": 1000014,
-    "version_string": "1.1.2",
+    "version_id": 1000015,
+    "version_string": "1.1.3",
     "dev": "wopox1337",
     "dev_url": "https://github.com/wopox1337",
     "faq_url": "https://github.com/hlds-run/addon-resource-publish-date/blob/main/docs/TROUBLESHOOTING.md",
