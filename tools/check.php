@@ -451,9 +451,66 @@ function checkCliCommands(string $addonRoot): void
 		if (strpos($contents, '->setName(') === false) {
 			fail('Cli/Command/' . basename($file) . ': never calls ->setName()');
 		}
+
+		checkCliConfigure($file, $contents);
 	}
 
 	note('CLI commands: ' . count($files));
+}
+
+/**
+ * Things that only break once somebody runs the command on a live board.
+ *
+ * Both checks here correspond to bugs that shipped in 1.1.2 and were invisible
+ * until the command was actually invoked on a forum.
+ *
+ *  - \XF::phrase() and friends inside configure(). XF\Cli\Runner instantiates
+ *    every command while building the list, before it sets up its own
+ *    XF\Cli\App. Any \XF:: call that needs an app creates an XF\App implicitly
+ *    at that point, and the Runner's own setApp then throws "A second app cannot
+ *    be setup" - which takes down every CLI command on the board, not just this
+ *    add-on's. Core avoids this by describing its commands in plain English.
+ *  - $output->table(). OutputInterface has no such method; rendering a table
+ *    means instantiating Symfony's Table helper.
+ *
+ * @param string $file path, for the message only
+ */
+function checkCliConfigure(string $file, string $contents): void
+{
+	$name = 'Cli/Command/' . basename($file);
+
+	// Comments are stripped first: both of these rules exist precisely because the
+	// mistake is worth writing a long note about, and a note naming the offending
+	// call would otherwise trip the very check that explains the note.
+	$code = preg_replace(['#/\*.*?\*/#s', '#//[^\n]*#'], '', $contents);
+
+	if (preg_match('/function\s+configure\s*\([^)]*\)\s*\{(.*?)\n    \}/s', $code, $match)) {
+		$body = $match[1];
+
+		// Calls that resolve through \XF::app(). Deliberately a list rather than
+		// "any \XF:: call": some are genuinely safe before the app exists.
+		// \XF::getAddOnDirectory() is one - it reads a static set by
+		// \XF::start() - and \XF::$version / \XF::$DS are plain properties.
+		// Verified against src/XF.php in 2.3.2 rather than assumed.
+		$appBackedCalls = [
+			'app', 'service', 'finder', 'em', 'options', 'config', 'session',
+			'phrase', 'phraseDeferred', 'language', 'repository',
+		];
+
+		foreach ($appBackedCalls as $method) {
+			if (preg_match('#\\\\XF::' . $method . '\s*\(#', $body)) {
+				fail("$name: configure() calls \\XF::$method(); "
+					. 'the command list is built before the app exists, so this throws '
+					. '"A second app cannot be setup" and breaks every CLI command on the board. '
+					. 'Use a plain English string.');
+			}
+		}
+	}
+
+	if (preg_match('#\$output->table\s*\(#', $code)) {
+		fail("$name: \$output->table() does not exist; OutputInterface has no table() method. "
+			. 'Use (new Table($output))->setHeaders(...)->setRows(...)->render().');
+	}
 }
 
 // --------------------------------------------------------------------------- main
