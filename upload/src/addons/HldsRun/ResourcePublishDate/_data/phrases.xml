@@ -61,4 +61,13 @@
 
   <phrase title="mod_log.resource_publish_date_bump" version_id="1000010" version_string="1.0.0"><![CDATA[Resource publish date moved by add-on ({from} &rarr; {to})]]></phrase>
   <phrase title="mod_log.thread_publish_date_bump" version_id="1000010" version_string="1.0.0"><![CDATA[Thread publish date moved by add-on ({from} &rarr; {to})]]></phrase>
+
+  <phrase title="hlds_run_rpd_cli_import_translation_description" version_id="1000010" version_string="1.0.0"><![CDATA[Imports one of this add-on's translations into a XenForo language.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_no_language" version_id="1000010" version_string="1.0.0"><![CDATA[No languages found in the database.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_language_missing" version_id="1000010" version_string="1.0.0"><![CDATA[Language {id} does not exist.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_missing_file" version_id="1000010" version_string="1.0.0"><![CDATA[Translation file {file} was not found in the add-on's translations directory.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_invalid_file" version_id="1000010" version_string="1.0.0"><![CDATA[Translation file {file} is not a readable phrases document.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_empty" version_id="1000010" version_string="1.0.0"><![CDATA[Language {title}: nothing to import.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_dry_run" version_id="1000010" version_string="1.0.0"><![CDATA[DRY RUN - {count} phrases would be imported into "{title}". Re-run without --dry-run to apply.]]></phrase>
+  <phrase title="hlds_run_rpd_cli_import_translation_done" version_id="1000010" version_string="1.0.0"><![CDATA[Language {title}: {count} phrases imported.]]></phrase>
 </phrases>
