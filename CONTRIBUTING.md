@@ -28,6 +28,41 @@ feat(cli): add --threads flag to backfill
 docs(behaviour): explain where last_update comes from
 ```
 
+## Language
+
+**Everything stored in this repository is in English.** Source, comments,
+docblocks, documentation, the changelog, and commit and pull request messages.
+
+This one is worth the paragraph rather than a line in the list above, because the
+add-on ships a Russian translation: a Russian comment in the source is not a
+hypothetical mistake here, it is the kind of thing that slips through precisely
+because the maintainer reads Russian fluently. English is what the surrounding
+XenForo code and the wider add-on ecosystem are written in, and a reader who has
+to ask what a comment means cannot review the line below it.
+
+Search matters too. `git log`, `git log -S` and `grep` are the interface to a
+repository, and a repository written half in one language and half in another
+answers a query only in the language the term happened to be used in.
+
+The exceptions are narrow:
+
+- **Translated phrase files.** `_translations/*.xml` and the phrase values inside
+  them are in their own language - that is the purpose of the file. The `title`
+  and `addon_id` attributes stay English and byte-identical across every
+  language, which `check.php` enforces.
+- **Documentation quoting a translated phrase** to identify it.
+  `docs/TRANSLATIONS.md` names real Russian UI strings such as *Обновлено* so an
+  author can find them on their own board. Quoting one is necessary; writing the
+  prose around it in Russian is not.
+
+If you are unsure whether something falls under an exception, it does not.
+
+This is a review rule, not a linted one. Nothing in `check.php` reads prose, and
+a language check would have to allow every legitimately quoted phrase - which
+means it would pass on exactly the mistakes worth catching. Like the
+arrow-function rule in [docs/DEVELOPING.md](docs/DEVELOPING.md), it is enforced
+by the reviewer.
+
 ## Reporting a bug
 
 Open an issue using the **Bug report** template and fill in the fields. The
