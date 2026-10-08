@@ -14,41 +14,51 @@ mask, and [docs/DEVELOPING.md](docs/DEVELOPING.md) for the naming rules - the gi
 tag, the release title and `version_string` are the same string, with no `v`
 prefix anywhere.
 
-## Unreleased
+## [1.2.2] - 2026-10-08
 
-### Removed
-
-- **The `hldsRunRpdEnabled` master switch.** It duplicated the disable button on
-  **Admin CP → Add-ons**, and two switches for one state is one more thing to
-  explain when a date did or did not move — and the wrong one to reach for under
-  pressure, since an option in a settings group is harder to find than a row in
-  the add-on list.
-
-  Nothing is lost. Disabling the add-on unloads its class extensions, so
-  `onApprove()` is never called and the board behaves exactly like stock XenForo,
-  immediately — which is what the option did.
-
-  **If you had it turned off, disable the add-on instead.** The remaining six
-  settings are unaffected, and an add-on that was switched off in the options was
-  already doing nothing.
-
-  Taken with it, because it existed only to report that state:
-  `PublishDateManager::isEnabled()`, `BumpResult::SKIPPED_DISABLED` and the
-  `hlds_run_rpd_reason_disabled` phrase. A disabled add-on never loads the code
-  that would have reported that reason.
+A patch release that removes one setting. Nothing about how the add-on behaves
+changes, except that there is one fewer place to look when a date did not move.
 
 ### For administrators
 
-No setting changes meaning, and no schema change, so `xf:addon-upgrade` only
-refreshes the file hashes and the phrase metadata.
+**To switch the add-on off, disable it on Admin CP → Add-ons.** The
+`Shift publish dates when content is approved` option is gone; it said the same
+thing as that button, in a harder-to-find place.
 
-The `xf_option` row for `hldsRunRpdEnabled` is either dropped by the data rebuild
-or left behind unread, depending on what XenForo does with an option that is no
-longer in `_data/`. Either is harmless — nothing references it — and
-[UPGRADE.md](docs/UPGRADE.md) says so. Do not delete it by hand: a rollback would
-want it back.
+**If you had that option turned off**, disable the add-on instead. Nothing else
+about your configuration changes — the other six settings keep their values, and
+an add-on switched off in the options was already doing nothing.
 
----
+No setting changes meaning and there is no database change, so
+`php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate` only refreshes the
+file hashes and the phrase metadata. Check **Tools → File Check** afterwards as
+usual.
+
+After the upgrade the group lists six settings instead of seven. The
+`xf_option` row for `hldsRunRpdEnabled` is either dropped by the data rebuild or
+left behind unread, depending on what XenForo does with an option that has left
+`_data/`; either way nothing reads it, and it is not worth deleting by hand — a
+rollback would want it back.
+
+### Removed
+
+- **The `hldsRunRpdEnabled` master switch.** Disabling the add-on already unloads
+  its class extensions, so `onApprove()` is never called and the board behaves
+  exactly like stock XenForo — immediately, with no deploy and no rebuild. Two
+  switches for one state is one more thing to explain when a date did or did not
+  move, and the wrong one to reach for under pressure.
+
+  It could not even disagree with the add-on's own switch: the option was read
+  inside the approval path, which only runs when the add-on is enabled. So an
+  administrator who set the option to `off` and then disabled the add-on was left
+  with an option at `0` that nothing read and nothing reset.
+
+### Changed
+
+- `PublishDateManager::isEnabled()`, `BumpResult::SKIPPED_DISABLED` and the
+  `hlds_run_rpd_reason_disabled` phrase, all of which existed only to report that
+  state. `SKIPPED_DISABLED_FOR_TYPE` is untouched — that one is real, and the
+  per-content-type options are unchanged.
 
 ## [1.2.1] - 2026-10-08
 

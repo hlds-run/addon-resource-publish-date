@@ -1,5 +1,5 @@
 {
-    "src/addons/HldsRun/ResourcePublishDate/addon.json": "a82c9108effc8ddcb214b55f8e12164fba2e33abfe117c9ad4271019fb2a7c21",
+    "src/addons/HldsRun/ResourcePublishDate/addon.json": "179264962f7190d1465d0447554417450d904ae58e2d8e1d6573a57ec0275800",
     "src/addons/HldsRun/ResourcePublishDate/Cli/Command/BackfillPublishDates.php": "5f9188b40dca1e6fe707899747208780fed663ff27b4c2f77ace5baec4dc404b",
     "src/addons/HldsRun/ResourcePublishDate/Cli/Command/ImportTranslation.php": "fd27b99b2c2994d61aafaec27fba827e5abe19825f4196840299a69c43ea5281",
     "src/addons/HldsRun/ResourcePublishDate/Option/ExcludedCategories.php": "50e4882366d158b6b85ced7f43125a2d519f779d46e9e003694890da53db5322",

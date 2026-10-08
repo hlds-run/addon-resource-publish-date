@@ -15,19 +15,24 @@ XenForo only validates that `version_id` is an integer, so
 
 ## Current values
 
-The current release is **1.2.1**.
+The current release is **1.2.2**.
 
 | Field | Value | Derived from |
 |---|---|---|
-| `version_id` in `addon.json` | `1020170` | `1.2.1` Stable under the `aabbccde` mask |
-| `version_string` in `addon.json` | `1.2.1` | unchanged |
+| `version_id` in `addon.json` | `1020270` | `1.2.2` Stable under the `aabbccde` mask |
+| `version_string` in `addon.json` | `1.2.2` | unchanged |
 | `require.XF` | `2030070` | XenForo 2.3.0 Stable |
 | `require.XFRM` | `2030070` | XenForo Resource Manager 2.3.0 Stable |
-| Phrase `version_id` (46 phrases) | `1000070` | text unchanged since 1.0.0 |
+| Phrase `version_id` (43 phrases) | `1000070` | text unchanged since 1.0.0 |
 | Phrase `version_id` (1 phrase) | `1020070` | `hlds_run_rpd_all_categories`, added in 1.2.0 |
 
-`1020170` is above `1000016`, the last value that actually reached a forum, so
-an installed copy is offered the upgrade rather than being reported as current.
+`1020270` is above `1020170`, the last value that actually reached a forum, so an
+installed copy is offered the upgrade rather than being reported as current.
+
+No phrase carries `1020270`. 1.2.2 removed three phrases and changed the text of
+none, so every surviving phrase still records the release that last changed it. That
+is the point of the per-phrase number: a phrase is only re-imported over an
+administrator's wording when its own version_id rises.
 
 There is no state word in `version_string`: the release is stable, so the state
 defaults to `Stable` and the digit `7`. Had the version been named `1.2.1 Beta 2`,
@@ -72,7 +77,8 @@ back into the same version.
 | XF 2.3.0 Stable | `2030070` |
 | 1.0.0 Stable (this add-on) | `1000070` |
 | 1.2.0 Stable (this add-on) | `1020070` |
-| 1.2.1 Stable (this add-on, current) | `1020170` |
+| 1.2.1 Stable (this add-on) | `1020170` |
+| 1.2.2 Stable (this add-on, current) | `1020270` |
 
 All four examples in XenForo's documentation - `1.7.3 RC 4`, `1.5.0 Beta 3`,
 `2.0.0` and `2.2.0` - were verified against the formula above and every one
