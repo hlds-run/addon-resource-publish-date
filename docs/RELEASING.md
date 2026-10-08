@@ -101,6 +101,11 @@ it, `hashes.json` is still regenerated and the archive step is skipped.
 `php -l` on PHP 7.4 and the runner's current PHP; `check.php`; `class_check.php`;
 build; fail if the rebuilt `hashes.json` differs from the committed copy.
 
+On a tag push all of these run regardless of the path filter, because GitHub does
+not evaluate path filters for tags. Do not be tempted to "verify" a release by
+pushing a docs commit and waiting for a green tick - the tick you already have is
+from the last commit that could actually fail.
+
 **CI has never run the add-on.** XenForo has no harness for class extensions, and
 a mock of `XFRM\Entity\ResourceItem` would test the mock. This is the whole reason
 a real install on a real board is still the last and most important check.

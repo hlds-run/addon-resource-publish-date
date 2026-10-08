@@ -11,6 +11,30 @@ on:
     # Plain version numbers, no `v` prefix, to match version_string and the
     # archive name. See "Versions, tags and file names" in docs/DEVELOPING.md.
     tags: ['[0-9]*']
+    # Three paths, because three things can break a build and nothing else can.
+    # Every job here reads the add-on, the tools that check it, or this file.
+    #
+    # So a push that touches only prose - README, docs/, CHANGELOG.md, the issue
+    # templates, the licence - builds nothing, parses nothing and checks nothing,
+    # and running four jobs to learn that is pure cost. It is not unusual: most
+    # commits in this repository are documentation.
+    #
+    # Deliberately NOT applied to pull_request. GitHub's own guidance is not to
+    # path-filter a workflow that is required to pass before merging, because a
+    # pull request whose files are all filtered out gets no check result at all -
+    # and a required check that never reports blocks the merge forever, with
+    # nothing to click. Pull requests here are rare and reviewed by one person,
+    # so they run every time.
+    #
+    # Safe for releases: GitHub does not evaluate path filters for tag pushes.
+    # A tag is an explicit statement that the tagged commit is being released, so
+    # the release job must never be skipped because the last few commits were
+    # documentation. See "Path filters are not evaluated for pushes of tags" in
+    # the workflow syntax reference.
+    paths:
+      - 'upload/**'
+      - 'tools/**'
+      - '.github/workflows/**'
   pull_request:
 
 permissions:
@@ -20,7 +44,13 @@ permissions:
 # small and fast, so two overlapping runs are pure waste.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # ...but never cancel a tag run. The release job publishes in two steps that
+  # are not atomic: upload the archive, then publish the release. A cancellation
+  # landing between them produces a release with notes and no archive - the exact
+  # failure the release job below documents, arriving by a different route. The
+  # run is a few seconds long and pushing a tag twice in that window is not a
+  # thing worth optimising for.
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 jobs:
   # XenForo 2.3 runs on PHP 7.4+. The add-on must therefore parse on every

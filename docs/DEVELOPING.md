@@ -277,6 +277,24 @@ php tools/build.php
 `check.php` covers only what XenForo does not already do for itself. `php -l`,
 XML well-formedness and `addon.json` validity are left to CI.
 
+**A prose-only push does not run CI.** The workflow is filtered to three paths -
+`upload/**`, `tools/**` and `.github/workflows/**` - which are exactly the three
+things any job in it reads. A commit that touches only README, `docs/`,
+`CHANGELOG.md`, the issue templates or the licence cannot fail a build, so it
+costs nothing to skip one. Most commits here are documentation, so this is the
+difference between CI being a signal and CI being noise.
+
+Two deliberate exceptions, both of which are the wrong thing to "optimise":
+
+- **Pull requests are not filtered.** GitHub's guidance is not to path-filter a
+  workflow that must pass before merging: a pull request whose files are all
+  filtered out produces no check result at all, and a required check that never
+  reports blocks the merge permanently with nothing to click.
+- **Tag pushes are never filtered**, because GitHub does not evaluate path
+  filters for tags at all. That is the behaviour to rely on, not a gap to work
+  around: a tag is an explicit statement that the commit is being released, and
+  the last few commits before it are usually documentation.
+
 CI lints on two PHP versions, 7.4 and the runner's own. One is enough to enforce
 the version-sensitive half of the style rules, because PHP syntax features are
 additive: anything newer than 7.4 fails to parse on 7.4. Confirmed by running
