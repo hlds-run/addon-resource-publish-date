@@ -32,8 +32,6 @@ body:
       options:
         - 1.0.0
         - Other (describe below)
-      validations:
-        required: true
     validations:
       required: true
   - type: dropdown
