@@ -16,7 +16,82 @@ prefix anywhere.
 
 ## Unreleased
 
-Nothing yet. Add entries here as you go, one line per user-visible change.
+### For administrators
+
+**Old resources can now be fixed from the Admin CP**, in two buttons at the bottom
+of **Options → Resource publish date**, without going to the command line:
+
+- **Preview next batch** reports how many resources the next batch would move and
+  writes nothing.
+- **Move these dates now** appears only after a preview, moves one batch, and is
+  spent afterwards.
+- **Discard preview** cancels a preview you did not mean to make.
+
+One click is one batch, oldest approvals first, so a board with more to do needs
+several clicks rather than one request that runs into the server's time limit. The
+batch size is an advanced setting in the same group, 100 by default. Excluded
+categories are still never touched, and the backfill is still idempotent.
+
+This is the same `hlds-run-rpd:backfill` code path, in
+`Service\BackfillService`; the command is unchanged in what it does and how it is
+invoked. Two deliberate differences: the buttons re-date discussion threads
+whenever **Resource discussion threads** is on, where the command needs an
+explicit `--threads`; and the buttons have no `--days` filter, so skipping
+recent approvals remains a command-line job.
+
+**The `hldsRunRpdEnabled` master switch is gone.** It duplicated the disable button
+on **Admin CP → Add-ons**, and two switches for one state is one more thing to
+explain when a date did or did not move. Disabling the add-on there unloads its
+class extensions, so behaviour is identical to stock XenForo, immediately - which
+is exactly what the option did.
+
+If you had it turned off, turn the add-on off instead. Nothing else changes: the
+remaining settings are unaffected, and an add-on that was disabled was already not
+doing anything.
+
+### Added
+
+- Backfill buttons in the options page: preview, run one batch, discard
+- `hldsRunRpdBackfillBatchSize`, an advanced spinbox bounding one button click
+- `Service\BackfillService` and `Service\BackfillResult`, shared by the command and
+  the buttons
+- One admin route, `Controller\Admin\Backfill`, registered in
+  `Setup::preRouteBuild()`
+- `tools/class_check.php` stubs for the controller stack, and compatibility
+  checklist rows 10 to 14 in `docs/UPGRADE.md`
+
+### Removed
+
+- The `hldsRunRpdEnabled` option and its two phrases. The `xf_option` row is left
+  in place, unused; XenForo does not remove options on upgrade and nothing reads
+  it any more
+- `PublishDateManager::isEnabled()`, `BumpResult::SKIPPED_DISABLED` and the
+  `hlds_run_rpd_reason_disabled` phrase. A disabled add-on never loads the code
+  that would have reported that reason
+
+### Changed
+
+- `Cli/Command/BackfillPublishDates` no longer contains the logic; it parses
+  arguments, calls the service and prints the result. Output is unchanged
+- `hlds-run-rpd:backfill` reports "nothing to do" on exactly the same condition as
+  before: no candidates at all. A batch whose candidates are all skipped still
+  prints a summary with `0 moved`
+
+### Notes for reviewers
+
+New phrases carry `version_id` 1020170 rather than the version this will ship in:
+`xf-addon:bump-version` rewrites every phrase's `version_id` when a release is
+cut, and `tools/check.php` rejects a phrase that claims a version that does not
+exist yet.
+
+The buttons are links, and the run action is a GET. XenForo does not put
+`_output/` in an add-on release ZIP - its documentation says so explicitly - so
+this add-on can ship no template and no JavaScript, and therefore has no form to
+POST. The run is protected by a `random_bytes()` key held in the administrator's
+own session, armed by the preview and consumed whether or not the run succeeds.
+The write is bounded by the batch size and idempotent, so a replayed link cannot
+move anything twice. See [docs/DEVELOPING.md](docs/DEVELOPING.md) for the full
+reasoning.
 
 ---
 

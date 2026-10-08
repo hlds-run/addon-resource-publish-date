@@ -155,6 +155,73 @@ abstract class AbstractCommand
 PHP);
 
 // ---------------------------------------------------------------------------
+// Stubs for the controller stack, added with the Admin CP backfill buttons.
+//
+// Mirrors the members Controller\Admin\Backfill actually calls, as of XenForo
+// 2.3.2. The list is deliberately short: only what the class declaration and the
+// $this-> pass need, for the same reason as every other stub in this file.
+//
+// Verified against 2.3.2 by reading src/XF/Mvc/Controller.php and
+// src/XF/AdminController.php. If a 2.3.x point release renames one of these -
+// or drops a route-registration hook - this file reports it, which is the
+// direction that gets fixed rather than shipped.
+//
+// The four vendor surfaces the backfill UI rests on, and where to read them:
+//
+//   Setup::preRouteBuild()          src/XF/AddOn/AbstractSetup.php
+//   RouteBuilder::$admin->add()     src/XF/Mvc/Router/RouteBuilder.php
+//                                   (the property is an Admin instance, whose
+//                                   add() lives in RouteBuilder/Admin.php)
+//   AdminController::assertAdminPermission(), redirect(), getContextualRedirect()
+//                                   src/XF/AdminController.php
+//   App::session() / Router::buildLink()
+//                                   src/XF/App.php, src/XF/Router.php
+//
+// These are also the assumptions to re-check first on a XenForo upgrade; they are
+// listed in docs/UPGRADE.md for that reason.
+// ---------------------------------------------------------------------------
+
+eval(<<<'PHP'
+namespace XF\Mvc;
+
+class Controller
+{
+	public function assertPost() {}
+	public function db() {}
+	public function em() {}
+	public function finder() {}
+	public function getContextualRedirect() {}
+	public function getRequest() {}
+	public function getResponse() {}
+	public function getUser() {}
+	public function redirect() {}
+	public function repository() {}
+	public function service() {}
+	public function setGlobal() {}
+	public function setMessage() {}
+	public function setView() {}
+	public function view() {}
+}
+PHP);
+
+eval(<<<'PHP'
+namespace XF;
+
+class AdminController extends \XF\Mvc\Controller
+{
+	public function assertAdminPermission() {}
+}
+PHP);
+
+eval(<<<'PHP'
+namespace XF\Mvc\Router;
+
+class RouteBuilder
+{
+}
+PHP);
+
+// ---------------------------------------------------------------------------
 // Stubs for the objects the helpers above hand back.
 //
 // Method lists extracted from the XenForo 2.3.2 source, not written by hand:
@@ -766,12 +833,16 @@ foreach ($files as $file) {
 $expected = [
 	ADDON_NAMESPACE . '\\PublishDateAddOn',
 	ADDON_NAMESPACE . '\\Setup',
+	ADDON_NAMESPACE . '\\Option\\BackfillTools',
 	ADDON_NAMESPACE . '\\Option\\ExcludedCategories',
+	ADDON_NAMESPACE . '\\Service\\BackfillResult',
+	ADDON_NAMESPACE . '\\Service\\BackfillService',
 	ADDON_NAMESPACE . '\\Service\\BumpResult',
 	ADDON_NAMESPACE . '\\Service\\PublishDateManager',
 	ADDON_NAMESPACE . '\\Service\\TranslationInstaller',
 	ADDON_NAMESPACE . '\\Cli\\Command\\BackfillPublishDates',
 	ADDON_NAMESPACE . '\\Cli\\Command\\ImportTranslation',
+	ADDON_NAMESPACE . '\\Controller\\Admin\\Backfill',
 	ADDON_NAMESPACE . '\\XFRM\\Service\\ResourceItem\\Approve',
 	ADDON_NAMESPACE . '\\XF\\Service\\Thread\\ApproverService',
 ];

@@ -77,8 +77,9 @@ php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate
 ```
 
 Rolling back does not un-shift dates that were already shifted. To stop future
-shifts without a deploy, set `option.hldsRunRpdEnabled = off` in the Admin CP -
-that is always the first thing to try, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+shifts without a deploy, disable the add-on on **Admin CP → Add-ons** - that is
+always the first thing to try, see
+[TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 
 ---
 
@@ -110,6 +111,18 @@ add-on makes.
 | 7 | The option phrase titles are still `option.<id>` / `option_explain.<id>` | `_data/phrases.xml` | Read `XF\Entity\Option::getPhraseName()` |
 | 8 | XFRM still forces the initial description to `message_state = 'visible'` | `Service/PublishDateManager::evaluateResourceStructure()` expects a visible update | Read `XFRM\Service\ResourceItem\Create::setupDefaults()` |
 | 9 | The parent classes still declare the same abstract members | `tools/class_check.php` stubs them | Update the stubs in `tools/class_check.php`, then run `php tools/class_check.php` |
+| 10 | Add-on routes are still registered by `Setup::preRouteBuild()` with `$builder->admin->add()` | `Setup::preRouteBuild()` | Read `XF\AddOn\AbstractSetup` and `XF\Mvc\Router\RouteBuilder` (and `RouteBuilder/Admin.php`) |
+| 11 | Admin controllers still extend `XF\AdminController` and still have `assertAdminPermission()`, `redirect()` and `getContextualRedirect()`; the request still has `getString()` | `Controller/Admin/Backfill.php` | Read `XF\AdminController`, `XF\Mvc\Controller` and `XF\Http\Request` |
+| 12 | `edit_format="callback"` still calls the static method in `edit_format_params` with `($option, $htmlParams)` | `Option/BackfillTools`, `Option/ExcludedCategories` | Read `XF\Controller\Admin\Options` and the `option_macros` template |
+| 13 | `App::session()` still returns a session with `get()`, `set()` and `delete()` | `Service/BackfillService` confirmation key | Read `XF\Session` |
+| 14 | An admin route still requires an admin session, and `App::router()->buildLink()` still takes an `action` parameter | `Controller/Admin/Backfill`, `Option/BackfillTools` | Read `XF\Mvc\Router\RouteBuilder/Admin.php` and `XF\Router` |
+
+Rows 10 to 14 arrived with the Admin CP backfill buttons, and they are the reason
+the buttons are not simply "a link to a page with a form on it": this add-on ships
+no templates and no JavaScript, so every piece of the Admin CP surface is built
+from XenForo's own templater and its own routing. Read
+[DEVELOPING.md](DEVELOPING.md#no-templates-no-javascript) for why, and read those
+five files before you trust a XenForo upgrade with this add-on on it.
 
 `tools/check.php` and `tools/class_check.php` cannot check any of these - they
 have no XenForo installation. They are a reading exercise, and they are the

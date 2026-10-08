@@ -31,11 +31,13 @@ Follow [INSTALL.md](INSTALL.md). Confirm:
 
 - [ ] Add-on installs and enables without a requirement error
 - [ ] **Tools → File Check** shows no unexpected content for the add-on
-- [ ] **Options → Resource publish date** exists and lists all seven settings
+- [ ] **Options → Resource publish date** exists and lists all eight settings,
+      including the backfill buttons and (with advanced options shown) the batch
+      size
 - [ ] `php src/cmd.php hlds-run-rpd:import-translation` lists languages, and the
       Russian row shows a shipped translation rather than `none`
 - [ ] **Admin CP → Phrases** for the Russian language shows Russian text for
-      `option.hldsRunRpdEnabled`, without the CLI having been run - install
+      `option.hldsRunRpdScope`, without the CLI having been run - install
       imports translations on its own. **This is the check that carries the whole
       release.** Do not substitute the error-log line: installed from the Admin CP
       it appears, installed from `cmd.php` XenForo discards it silently, so its
@@ -140,6 +142,25 @@ UPDATE xf_rm_resource_update SET post_date = <old>
 - [ ] A resource in an excluded category is skipped
 - [ ] `--limit=1` stops after one resource
 
+### The same work, from the Admin CP
+
+Same fixture: restore the dates with the SQL above, then in **Options → Resource
+publish date** use the buttons at the bottom of the group.
+
+- [ ] Only *Preview next batch* is there to begin with, and no "move" button
+- [ ] **Preview** reports a count and writes nothing (re-check with the SQL above)
+- [ ] **Move these dates now** appears, next to *Discard preview*
+- [ ] Discarding removes it again
+- [ ] Moving reports how many moved, how many skipped, and whether more are waiting
+- [ ] The move button is gone after the run, and re-clicking the old link does
+      nothing (copy the URL before clicking and try it twice)
+- [ ] Reloading the options page does not resurrect a spent confirmation
+- [ ] A second administrator's preview does not invalidate yours, and their run
+      link does not run your batch
+- [ ] With **Resource discussion threads** off, the thread is not touched
+- [ ] Setting the batch size to 1 moves exactly one resource per click
+- [ ] The buttons behave the same with the add-on's Russian translation installed
+
 ## 8. Failure handling
 
 - [ ] With moderator logging as-is, an approval from the queue works
@@ -147,6 +168,8 @@ UPDATE xf_rm_resource_update SET post_date = <old>
       error log
 - [ ] Backfill with `--log` outside a web context behaves as documented (it should
       not be used; confirm the option defaults to off)
+- [ ] A backfill run from the buttons with moderator logging on writes a
+      `publish_date_bump` entry per resource and does not throw
 
 ## 9. Performance sanity
 

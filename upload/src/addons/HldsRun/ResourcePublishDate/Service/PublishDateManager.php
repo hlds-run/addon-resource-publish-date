@@ -59,11 +59,6 @@ class PublishDateManager extends AbstractService
     // Configuration
     // ------------------------------------------------------------------
 
-    public function isEnabled(): bool
-    {
-        return (bool) $this->app->options()->hldsRunRpdEnabled;
-    }
-
     public function getScope(): string
     {
         $scope = (string) $this->app->options()->hldsRunRpdScope;
@@ -247,10 +242,6 @@ class PublishDateManager extends AbstractService
      */
     public function evaluateResource(ResourceItem $resource, ?int $now = null): BumpResult
     {
-        if (!$this->isEnabled()) {
-            return BumpResult::skipped(BumpResult::SKIPPED_DISABLED);
-        }
-
         if (!$this->shouldBumpResources()) {
             return BumpResult::skipped(BumpResult::SKIPPED_DISABLED_FOR_TYPE);
         }
@@ -364,10 +355,6 @@ class PublishDateManager extends AbstractService
      */
     public function evaluateThread(Thread $thread, ?int $now = null): BumpResult
     {
-        if (!$this->isEnabled()) {
-            return BumpResult::skipped(BumpResult::SKIPPED_DISABLED);
-        }
-
         if (!$this->shouldBumpThreads()) {
             return BumpResult::skipped(BumpResult::SKIPPED_DISABLED_FOR_TYPE);
         }

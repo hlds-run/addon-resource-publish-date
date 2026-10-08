@@ -37,12 +37,35 @@ use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
 use XF\AddOn\StepRunnerUpgradeTrait;
+use XF\Mvc\Router\RouteBuilder;
 
 class Setup extends AbstractSetup
 {
     use StepRunnerInstallTrait;
     use StepRunnerUninstallTrait;
     use StepRunnerUpgradeTrait;
+
+    /**
+     * Registers the one Admin CP route this add-on owns.
+     *
+     * An admin route, not a public one: everything behind it moves content dates
+     * and is gated by AdminController::assertAdminPermission('option'), which is
+     * the same permission the page holding the buttons needs.
+     *
+     * Static because that is how the router collects add-on routes - it calls
+     * this on the class, without an instance.
+     *
+     * There is no public route and no navigation entry on purpose. The buttons
+     * live in the options page (see Option\BackfillTools), so this route exists
+     * only to be the target they point at.
+     */
+    public static function preRouteBuild(RouteBuilder $builder)
+    {
+        $builder->admin->add(
+            'hldsRunRpdBackfill',
+            'HldsRun\ResourcePublishDate\Controller\Admin\Backfill'
+        );
+    }
 
     /**
      * Import the shipped translations into every language the board already has.

@@ -20,9 +20,6 @@
   <phrase title="option_group.hldsRunRpd" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Дата публикации ресурса]]></phrase>
   <phrase title="option_group_description.hldsRunRpd" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Когда модератор одобряет ресурс, провисевший в очереди на проверке, XenForo меняет только его видимость — ресурс сохраняет дату отправки. Из-за этого он может оказаться глубоко в списках «новых ресурсов». Эти настройки управляют переносом даты публикации на момент одобрения. Документация и поддержка: github.com/hlds-run/addon-resource-publish-date.]]></phrase>
 
-  <phrase title="option.hldsRunRpdEnabled" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Переносить дату публикации при одобрении]]></phrase>
-  <phrase title="option_explain.hldsRunRpdEnabled" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Главный переключатель. Когда выключено, аддон ничего не делает и форум работает как штатный XenForo. Это самый быстрый способ отключить эффект аддона, не удаляя его.]]></phrase>
-
   <phrase title="option.hldsRunRpdScope" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Когда переносить дату]]></phrase>
   <phrase title="option_explain.hldsRunRpdScope" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Определяет, может ли одобрение, которое не является первым (снять с модерации, правка, повторная модерация, новое одобрение), снова сдвинуть дату. Вариант «Только первое одобрение» — безопасный: ресурс, который уже публиковался, никогда не вернётся наверх списков.]]></phrase>
   <phrase title="hlds_run_rpd_scope_first_approval" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Только первое одобрение]]></phrase>
@@ -47,7 +44,6 @@
   <phrase title="option_explain.hldsRunRpdLogToModeratorLog" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Добавляет запись в лог модератора на каждый сдвиг даты, чтобы изменение было видно рядом с записью об одобрении. Команда backfill по умолчанию это отключает: для записи в лог модератора нужен HTTP-запрос, чтобы определить IP модератора.]]></phrase>
 
   <phrase title="hlds_run_rpd_reason_bumped" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[даты перенесены на момент одобрения]]></phrase>
-  <phrase title="hlds_run_rpd_reason_disabled" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[аддон выключен]]></phrase>
   <phrase title="hlds_run_rpd_reason_disabled_for_type" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[перенос отключён для этого типа контента]]></phrase>
   <phrase title="hlds_run_rpd_reason_category_excluded" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[категория в списке исключений]]></phrase>
   <phrase title="hlds_run_rpd_reason_below_minimum_age" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[провёл в очереди меньше заданного минимума]]></phrase>
@@ -75,4 +71,22 @@
   <phrase title="hlds_run_rpd_cli_backfill_candidates" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Ресурсов к переносу на исходную дату одобрения: {count}.]]></phrase>
   <phrase title="hlds_run_rpd_cli_backfill_summary" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Готово. Перенесено ресурсов: {moved}, пропущено: {skipped}.]]></phrase>
   <phrase title="hlds_run_rpd_cli_backfill_nothing" addon_id="HldsRun/ResourcePublishDate" version_id="1000070" version_string="1.0.0"><![CDATA[Делать нечего: нет видимых ресурсов, у которых дата одобрения старше текущей даты публикации.]]></phrase>
+
+  <phrase title="option.hldsRunRpdBackfillBatchSize" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Размер батча бэкфилла]]></phrase>
+  <phrase title="option_explain.hldsRunRpdBackfillBatchSize" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Сколько ресурсов может перенести один клик по кнопкам бэкфилла ниже. Один клик — это один HTTP-запрос, поэтому размер ограничен намеренно: слишком маленький батч стоит ещё одного клика, слишком большой упирается в лимит времени выполнения на сервере. 100 — хорошее значение по умолчанию; увеличивайте, только если клик заметно быстрее секунды.]]></phrase>
+
+  <phrase title="option.hldsRunRpdBackfillTools" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Обновить даты старых ресурсов]]></phrase>
+  <phrase title="option_explain.hldsRunRpdBackfillTools" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Переносит дату публикации ресурсов, одобренных до установки аддона, используя даты одобрения, которые уже есть в логе модератора. Всегда сначала делайте превью: оно ничего не записывает, а кнопка переноса появляется только после превью. Один клик обрабатывает один батч, поэтому если ресурсов больше, понадобится несколько кликов — сначала самые старые одобрения, и каждый клик продолжает с того места, где остановился предыдущий. Исключённые категории не затрагиваются, что бы ни было настроено здесь.]]></phrase>
+
+  <phrase title="hlds_run_rpd_backfill_preview_button" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Показать следующий батч]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_run_button" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Перенести эти даты сейчас]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_discard_button" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Отменить превью]]></phrase>
+
+  <phrase title="hlds_run_rpd_backfill_pending" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Превью: даты перенесутся у ресурсов — {count}, на момент их одобрения. Пока ничего не записано.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_preview" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Превью: в следующем батче даты перенесутся у ресурсов — {count}, на момент их одобрения. Пока ничего не записано.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_nothing" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Делать нечего: нет видимых ресурсов, у которых дата одобрения старше текущей даты публикации.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_run_more" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Перенесено ресурсов: {moved}, пропущено: {skipped}. Впереди ещё — сделайте превью снова, чтобы продолжить.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_run_done" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Перенесено ресурсов: {moved}, пропущено: {skipped}. Больше ждать нечего.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_discarded" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Превью отменено. Ничего не записано.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_no_confirmation" addon_id="HldsRun/ResourcePublishDate" version_id="1020170" version_string="1.2.1"><![CDATA[Подтверждение отсутствует или уже использовано. Сделайте превью батча заново.]]></phrase>
 </phrases>

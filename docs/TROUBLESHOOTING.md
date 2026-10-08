@@ -247,6 +247,7 @@ of the newest visible update, or the next rebuild will disagree with you.
 
 ## Turning everything off without deploying
 
-Set `option.hldsRunRpdEnabled = off` in the Admin CP. It takes effect on the very
-next approval. This is the first thing to do when something looks wrong in
-production.
+Disable the add-on on **Admin CP → Add-ons**. Its class extensions are unloaded,
+so `onApprove()` is never called and the board behaves exactly like stock
+XenForo. It takes effect on the very next approval. This is the first thing to do
+when something looks wrong in production.

@@ -61,8 +61,9 @@ php src/cmd.php hlds-run-rpd:import-translation 6
 #    Admin CP -> Options -> Resource publish date
 ```
 
-[docs/INSTALL.md](docs/INSTALL.md) has the full procedure, including the
-`--dry-run` backfill for resources that were already approved before the install.
+[docs/INSTALL.md](docs/INSTALL.md) has the full procedure, including how to fix
+resources that were already approved before the install - from two buttons in the
+same options page, or from the `--dry-run` backfill on the command line.
 
 ## What it does and does not touch
 

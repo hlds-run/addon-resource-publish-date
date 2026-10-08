@@ -14,10 +14,15 @@ final class BumpResult
     /** Dates were shifted. */
     public const BUMPED = 'bumped';
 
-    /** The add-on is switched off globally. */
-    public const SKIPPED_DISABLED = 'disabled';
-
-    /** Date shifting for this content type is switched off in the options. */
+    /**
+     * Date shifting for this content type is switched off in the options.
+     *
+     * There is deliberately no "the add-on is switched off" status. It used to
+     * exist, alongside an hldsRunRpdEnabled option that duplicated the disable
+     * button on Admin CP -> Add-ons: a disabled add-on has its class extensions
+     * unloaded, so onApprove() is never called and there is no decision left to
+     * record. One switch, and it is the one XenForo already owns.
+     */
     public const SKIPPED_DISABLED_FOR_TYPE = 'disabled_for_type';
 
     /** The resource's category is on the exclusion list. */

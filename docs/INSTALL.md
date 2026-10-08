@@ -131,18 +131,43 @@ The defaults are the conservative ones and are correct for most boards:
 
 | Setting | Default | Recommendation |
 |---|---|---|
-| Shift publish dates when content is approved | on | keep on |
 | When to shift dates | only the first approval | keep; "every approval" is a deliberate policy choice |
 | Resources | on | keep |
 | Resource discussion threads | on | keep, unless resource threads are closed for discussion anyway |
 | Minimum time in the moderation queue | 0 | raise only if instant approvals should not count |
 | Excluded resource categories | empty | fill in for long-curation categories |
 | Record date shifts in the moderator log | on | keep |
+| Backfill batch size (advanced) | 100 | keep |
+
+There is no on/off switch. To stop the add-on doing anything, disable it on
+**Admin CP → Add-ons** - that is the switch XenForo owns, and it takes effect on
+the next approval.
 
 ## 5. Optional: fix content that was already published
 
 Resources approved before the add-on was installed keep their old dates. To move
-them to the date they were actually approved:
+them to the date they were actually approved, either use the buttons in the same
+options page, or the CLI.
+
+### From the Admin CP
+
+**Admin CP → Options → Resource publish date → Backfill older resources.**
+
+1. **Preview next batch.** Writes nothing; tells you how many resources the next
+   batch would move.
+2. **Move these dates now.** Appears only after a preview. Moves one batch
+   (100 resources by default, see `hldsRunRpdBackfillBatchSize`) and reports how
+   many moved, how many were skipped, and whether more are waiting.
+
+Repeat while it says more are waiting. Each click continues where the last stopped
+rather than redoing it, because the batch is the oldest approvals first and a
+resource already at its approval date is skipped. The buttons run the same code
+the CLI does, in batches bounded to survive an ordinary web request.
+
+### From the CLI
+
+The command does the same work without the per-click dance, prints each resource
+it touches, and can filter by age:
 
 ```bash
 # 1. always start here
@@ -155,11 +180,15 @@ php src/cmd.php hlds-run-rpd:backfill --dry-run --days=30 --limit=100
 php src/cmd.php hlds-run-rpd:backfill --days=30 --threads
 ```
 
-The command is idempotent: it only touches resources whose stored publish date is
-*newer* than their approval date, and it works oldest-approval-first, so running
-it repeatedly in batches converges. Read
+Both are idempotent: they only touch resources whose stored publish date is
+*newer* than their approval date, and they work oldest-approval-first, so running
+them repeatedly in batches converges. Read
 [TROUBLESHOOTING.md](TROUBLESHOOTING.md#recovering-from-a-mistake) before running
-it on production.
+either on production.
+
+Differences worth knowing: the command takes an explicit `--threads`, while the
+buttons follow the `Resource discussion threads` option; and only the command has
+`--days`, which is how you skip approvals that are too recent to be worth moving.
 
 ## 6. Uninstall
 
@@ -169,7 +198,8 @@ php src/cmd.php xf:addon-uninstall HldsRun/ResourcePublishDate
 
 There is no database state to clean up: the add-on creates no tables and adds no
 columns. Already-shifted dates are *not* reverted, because the original values are
-not stored anywhere - this is deliberate, see [BEHAVIOR.md](BEHAVAVIOR.md) §9 for
-why inventing a publish-date column would be worse. Disabling the add-on
-(`option.hldsRunRpdEnabled = off`) stops all future shifts immediately and is the
+not stored anywhere - this is deliberate, see [BEHAVIOR.md](BEHAVIOR.md) §9 for
+why inventing a publish-date column would be worse. Disabling the add-on on
+**Admin CP → Add-ons** stops all future shifts immediately and is the
 recommended first step if something looks wrong.
+

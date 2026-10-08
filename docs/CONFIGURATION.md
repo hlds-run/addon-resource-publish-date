@@ -8,16 +8,17 @@ there is exactly one place where a default is defined.
 
 ---
 
-## `hldsRunRpdEnabled` — master switch
+## Turning the add-on off
 
-**Default: on.**
+There is no on/off option, and that is deliberate. Disabling the add-on on
+**Admin CP → Add-ons** unloads its class extensions, so `onApprove()` is never
+called and behaviour is identical to stock XenForo - instantly, with no deploy and
+no rebuild.
 
-When off, both class extensions still run but `evaluateResource()` and
-`evaluateThread()` return immediately, so behaviour is identical to stock
-XenForo.
-
-Use it as the emergency stop: turning it off takes effect on the next approval
-with no deploy and no rebuild.
+An `hldsRunRpdEnabled` switch existed through 1.2.1 and said the same thing in a
+second place. Two switches for one state is one more thing to explain when a date
+did or did not move, and the wrong one to reach for under pressure: an option in
+this group is harder to find than a row in the add-on list.
 
 ## `hldsRunRpdScope` — when to shift
 
@@ -103,6 +104,49 @@ The backfill command disables this regardless of the option, because
 `XF\ModeratorLog\AbstractHandler::setupLogEntityActor()` resolves the actor's IP
 from the HTTP request and throws when there is none. Pass `--log` to override
 deliberately.
+
+The backfill **buttons** do the opposite: they run inside a request, so the option
+is honoured as written.
+
+## `hldsRunRpdBackfillBatchSize` — resources per click
+
+**Default: `100`, maximum 500.** An advanced option.
+
+Bounds the two backfill buttons in this group. One click is one web request, and a
+request that runs past `max_execution_time` dies halfway through a batch - leaving
+some resources moved and the administrator unsure which. A batch that is too small
+only costs another click.
+
+Raise it only if a click takes visibly less than a second. The CLI is not bound by
+this option; it has its own `--limit`, defaulting to 500.
+
+## `hldsRunRpdBackfillTools` — the backfill buttons
+
+**Not a setting.** This row draws two buttons and stores nothing.
+
+- **Preview next batch** runs the batch as a dry run and reports how many
+  resources would move. Nothing is written.
+- **Move these dates now** appears only after a preview, and only in the
+  administrator's own session. It writes one batch and is gone afterwards: a
+  second click does nothing, and the button comes back only after another preview.
+- **Discard preview** cancels the pending batch.
+
+The batch is the oldest approvals first, and one batch per click, so a board with
+5,000 resources to fix needs 50 clicks rather than one request that times out.
+Excluded categories are never touched, and re-checked against the live option
+rather than trusted from the query - so a category added to
+`hldsRunRpdExcludedCategories` after a preview still wins.
+
+Discussion threads are re-dated as part of the batch only if
+`hldsRunRpdBumpThread` is on. That differs from the CLI, where it takes an explicit
+`--threads`: a button run is a deliberate, supervised act, and asking twice about
+an option already on screen would only produce a wrong answer.
+
+There is no age filter on a button run: `--days` remains CLI-only, so skipping
+recent approvals means running the command. See [INSTALL.md](INSTALL.md) §5.
+
+See [INSTALL.md](INSTALL.md) §5 for the CLI equivalent and
+[BEHAVIOR.md](BEHAVIOR.md) for what the write actually touches.
 
 ---
 

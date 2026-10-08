@@ -9,12 +9,12 @@
 
     Defaults are deliberately conservative: the add-on only touches content when
     it is genuinely being published for the first time.
-  -->
 
-  <option option_id="hldsRunRpdEnabled" edit_format="onoff" data_type="boolean" advanced="0">
-    <default_value>1</default_value>
-    <relation group_id="hldsRunRpd" display_order="10"/>
-  </option>
+    There is deliberately no "enabled" option. Disabling the add-on on Admin CP ->
+    Add-ons unloads its class extensions, so onApprove() stops being called and
+    the behaviour is stock XenForo; a second switch that says the same thing is a
+    second thing to explain when the date did or did not move.
+  -->
 
   <option option_id="hldsRunRpdScope" edit_format="radio" data_type="string" advanced="0">
     <default_value>first</default_value>
@@ -51,5 +51,24 @@ units={{ phrase('units_minutes') }}</edit_format_params>
   <option option_id="hldsRunRpdLogToModeratorLog" edit_format="onoff" data_type="boolean" advanced="1">
     <default_value>1</default_value>
     <relation group_id="hldsRunRpd" display_order="70"/>
+  </option>
+
+  <option option_id="hldsRunRpdBackfillBatchSize" edit_format="spinbox" data_type="unsigned_integer" advanced="1">
+    <default_value>100</default_value>
+    <edit_format_params>min=1
+max=500
+units={{ phrase('units_items') }}</edit_format_params>
+    <relation group_id="hldsRunRpd" display_order="80"/>
+  </option>
+
+  <!--
+    Display only: the row draws the backfill buttons and stores nothing. It is
+    advanced="0" while the batch size above is advanced="1" on purpose - the
+    buttons are the point of the group and must never be hidden behind a toggle.
+  -->
+  <option option_id="hldsRunRpdBackfillTools" edit_format="callback" data_type="string" validation_class="HldsRun\ResourcePublishDate\Option\BackfillTools" validation_method="verifyOption" advanced="0">
+    <default_value></default_value>
+    <edit_format_params>HldsRun\ResourcePublishDate\Option\BackfillTools::renderTools</edit_format_params>
+    <relation group_id="hldsRunRpd" display_order="90"/>
   </option>
 </options>

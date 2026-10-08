@@ -17,13 +17,16 @@
       hlds_run_rpd_reason_*             - why a date shift did or did not happen
       mod_log.<content_type>_<action>   - moderator log entries
       hlds_run_rpd_cli_*                - CLI command output
+      hlds_run_rpd_backfill_*           - the Admin CP backfill buttons
+
+    Phrases added after 1.2.1 carry that release's version_id rather than the one
+    they will ship in: `xf-addon:bump-version` rewrites the version_id and
+    version_string of every phrase when a release is cut, and tools/check.php
+    rejects a phrase that claims to come from a version that does not exist yet.
   -->
 
   <phrase title="option_group.hldsRunRpd" version_id="1000070" version_string="1.0.0"><![CDATA[Resource publish date]]></phrase>
   <phrase title="option_group_description.hldsRunRpd" version_id="1000070" version_string="1.0.0"><![CDATA[When a moderator approves a resource that has been waiting in the approval queue, XenForo only changes its visibility - the resource keeps the date it was submitted with. As a result it can appear deep inside the "new resources" lists. These settings control moving the publish date to the moment of approval. Documentation and support: github.com/hlds-run/addon-resource-publish-date.]]></phrase>
-
-  <phrase title="option.hldsRunRpdEnabled" version_id="1000070" version_string="1.0.0"><![CDATA[Shift publish dates when content is approved]]></phrase>
-  <phrase title="option_explain.hldsRunRpdEnabled" version_id="1000070" version_string="1.0.0"><![CDATA[Master switch. When off, the add-on does nothing at all and behaves exactly like stock XenForo. Turning this off is the fastest way to undo the add-on's effect without uninstalling it.]]></phrase>
 
   <phrase title="option.hldsRunRpdScope" version_id="1000070" version_string="1.0.0"><![CDATA[When to shift dates]]></phrase>
   <phrase title="option_explain.hldsRunRpdScope" version_id="1000070" version_string="1.0.0"><![CDATA[Decides whether an approval that is not the first one (unapprove, edit, moderate again, approve) is allowed to move the date again. "Only the first approval" is the safe choice: a resource that was published once will never jump back to the top of the lists.]]></phrase>
@@ -49,7 +52,6 @@
   <phrase title="option_explain.hldsRunRpdLogToModeratorLog" version_id="1000070" version_string="1.0.0"><![CDATA[Adds a moderator log entry for every date shift, so the change is auditable next to the approval entry. The backfill command disables this by default because moderator log entries need an HTTP request in order to resolve the moderator's IP address.]]></phrase>
 
   <phrase title="hlds_run_rpd_reason_bumped" version_id="1000070" version_string="1.0.0"><![CDATA[dates moved to the approval time]]></phrase>
-  <phrase title="hlds_run_rpd_reason_disabled" version_id="1000070" version_string="1.0.0"><![CDATA[add-on is switched off]]></phrase>
   <phrase title="hlds_run_rpd_reason_disabled_for_type" version_id="1000070" version_string="1.0.0"><![CDATA[shifting is switched off for this content type]]></phrase>
   <phrase title="hlds_run_rpd_reason_category_excluded" version_id="1000070" version_string="1.0.0"><![CDATA[category is on the exclusion list]]></phrase>
   <phrase title="hlds_run_rpd_reason_below_minimum_age" version_id="1000070" version_string="1.0.0"><![CDATA[spent less than the configured minimum time in the queue]]></phrase>
@@ -77,4 +79,22 @@
   <phrase title="hlds_run_rpd_cli_backfill_candidates" version_id="1000070" version_string="1.0.0"><![CDATA[{count} resources would be moved to their original approval date.]]></phrase>
   <phrase title="hlds_run_rpd_cli_backfill_summary" version_id="1000070" version_string="1.0.0"><![CDATA[Done. {moved} resources moved, {skipped} skipped.]]></phrase>
   <phrase title="hlds_run_rpd_cli_backfill_nothing" version_id="1000070" version_string="1.0.0"><![CDATA[Nothing to do: no visible resource has an approval date older than its current publish date.]]></phrase>
+
+  <phrase title="option.hldsRunRpdBackfillBatchSize" version_id="1020170" version_string="1.2.1"><![CDATA[Backfill batch size]]></phrase>
+  <phrase title="option_explain.hldsRunRpdBackfillBatchSize" version_id="1020170" version_string="1.2.1"><![CDATA[How many resources one click of the backfill buttons below may move. One click is one web request, so this is bounded on purpose: a batch that is too small costs another click, and one that is too large runs into the server's execution time limit halfway through. 100 is a good default; raise it only if a click takes visibly less than a second.]]></phrase>
+
+  <phrase title="option.hldsRunRpdBackfillTools" version_id="1020170" version_string="1.2.1"><![CDATA[Backfill older resources]]></phrase>
+  <phrase title="option_explain.hldsRunRpdBackfillTools" version_id="1020170" version_string="1.2.1"><![CDATA[Moves the publish date of resources that were approved before this add-on was installed, using the approval dates the moderator log already holds. Always preview first: the preview writes nothing, and the move button only appears once a batch has been previewed. One click handles one batch, so a board with more to do needs several clicks - oldest approvals first, and each click continues where the last stopped. Excluded categories are never touched, whatever else is configured here.]]></phrase>
+
+  <phrase title="hlds_run_rpd_backfill_preview_button" version_id="1020170" version_string="1.2.1"><![CDATA[Preview next batch]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_run_button" version_id="1020170" version_string="1.2.1"><![CDATA[Move these dates now]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_discard_button" version_id="1020170" version_string="1.2.1"><![CDATA[Discard preview]]></phrase>
+
+  <phrase title="hlds_run_rpd_backfill_pending" version_id="1020170" version_string="1.2.1"><![CDATA[Previewed: {count} resources would move to the moment they were approved. Nothing has been written yet.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_preview" version_id="1020170" version_string="1.2.1"><![CDATA[Preview: {count} resources in the next batch would move to the moment they were approved. Nothing has been written.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_nothing" version_id="1020170" version_string="1.2.1"><![CDATA[Nothing to do: no visible resource has an approval date older than its current publish date.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_run_more" version_id="1020170" version_string="1.2.1"><![CDATA[Moved {moved} resources, skipped {skipped}. More are still waiting - preview again to continue.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_run_done" version_id="1020170" version_string="1.2.1"><![CDATA[Moved {moved} resources, skipped {skipped}. Nothing else is waiting.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_discarded" version_id="1020170" version_string="1.2.1"><![CDATA[Preview discarded. Nothing has been written.]]></phrase>
+  <phrase title="hlds_run_rpd_backfill_no_confirmation" version_id="1020170" version_string="1.2.1"><![CDATA[That confirmation is missing or has already been used. Preview the batch again.]]></phrase>
 </phrases>

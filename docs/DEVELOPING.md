@@ -29,7 +29,10 @@ can change the add-on without guessing.
         │   ├── BumpResult.php                outcome object
         │   ├── PublishDateManager.php        all decisions and all writes
         │   └── TranslationInstaller.php      imports _translations/*.xml
-        ├── Option/ExcludedCategories.php     dynamic option rendering
+        ├── Option/
+        │   ├── BackfillTools.php               backfill buttons in the options page
+        │   └── ExcludedCategories.php          dynamic option rendering
+        ├── Controller/Admin/Backfill.php       preview / run / discard, one admin route
         ├── XFRM/Service/ResourceItem/Approve.php
         ├── XF/Service/Thread/ApproverService.php
         ├── Cli/Command/
@@ -44,6 +47,38 @@ repository-only and are **not** copied to the forum. That mirrors the XenForo
 convention used by the official `xenforo.com` add-on repositories, and it keeps
 the forum directory free of documentation nobody serves.
 
+## No templates, no JavaScript
+
+There is no `_output/` in this add-on, and there is never going to be one.
+
+XenForo's release builder does not put `_output/` into an add-on ZIP. Its own
+documentation says the directory "is not required for a successful installation of
+an add-on, and shouldn't be included when releasing the add-on", and
+`tools/build.php` excludes it to match. A template written under
+`_output/templates/` therefore exists on the developer's machine and nowhere else;
+it is a file that cannot be shipped.
+
+That is the whole reason there is no custom admin page, no confirmation screen and
+no JS for the backfill buttons. Three consequences worth knowing before proposing
+anything that needs a screen of its own:
+
+- **UI is built from the templater, in PHP.** `Option\ExcludedCategories` and
+  `Option\BackfillTools` are both `edit_format="callback"` rows that return a
+  string of HTML from `\XF::app()->templater()`. That is the supported mechanism
+  for an option row that is not a plain input, and it needs no template rebuild
+  when XenForo or XFRM changes.
+- **There is no form to POST.** Which is why the backfill run action is a GET,
+  protected by a 32-character key from `random_bytes()` held in the
+  administrator's own session, armed by the preview and consumed whatever the
+  outcome. If you add a second write action, follow the same shape, or find a way
+  to ship a template first.
+- **The only asset the add-on has is the vendor's own.** XenForo's confirm
+  dialogs, button styling and admin navigation are available because XenForo
+  ships them. Anything else has to be CSS we cannot ship.
+
+`docs/UPGRADE.md` lists the five vendor surfaces this rests on, so a XenForo
+upgrade can be checked rather than discovered.
+
 ## Two-layer architecture, and why
 
 The XenForo-facing surface is exactly two method overrides:
@@ -53,7 +88,9 @@ XFRM\Service\ResourceItem\Approve::onApprove()
 XF\Service\Thread\ApproverService::onApprove()
 ```
 
-Everything else lives in `Service\PublishDateManager`. Rules:
+Everything else lives in a service: `Service\PublishDateManager` for the approval
+flow, `Service\BackfillService` for re-dating old content, and the controller
+renders what those services report. Rules:
 
 - **Class extensions must stay trivial.** Their only job is to call the parent and
   hand over. Logic in a class extension is logic we have to re-verify on every
@@ -119,20 +156,26 @@ every other add-on. `tools/check.php` fails the build on an unprefixed one.
 
 ## Adding a feature
 
-1. Decide whether it belongs in the manager or in a class extension. Rule of thumb:
-   if it is a decision or a write, it belongs in `Service\PublishDateManager`.
+1. Decide whether it belongs in a service or in a class extension. Rule of thumb:
+   if it is a decision or a write, it belongs in a service. A controller reads
+   configuration and renders a result; it decides nothing.
 2. Add a `BumpResult` status if you need a new "why not" state, and add the
    matching `hlds_run_rpd_reason_*` phrase to `_data/phrases.xml` **and** every
    translation. The validator enforces the latter.
 3. If you add an option: add it to `_data/options.xml`, add `option.<id>` and
-   `option_explain.<id>` phrases, and read it through a manager accessor, never
+   `option_explain.<id>` phrases, and read it through a service accessor, never
    `$options()->foo` inline.
 4. If you add a CLI option: give it a default that cannot destroy data, and make
-   sure `--dry-run` covers it.
-5. Bump `version_id` / `version_string` in `addon.json`, update `CHANGELOG.md`.
-6. `php tools/check.php && php tools/build.php`, and commit the regenerated
+   sure `--dry-run` covers it. If a web button can trigger the same work, it gets
+   the same treatment: a preview that writes nothing, a batch bound, and a
+   confirmation that is consumed by the action that needs it.
+5. If you add anything XenForo-facing, add it to the compatibility checklist in
+   [UPGRADE.md](UPGRADE.md) with the file to read, and stub what
+   `class_check.php` needs to load it.
+6. Bump `version_id` / `version_string` in `addon.json`, update `CHANGELOG.md`.
+7. `php tools/check.php && php tools/build.php`, and commit the regenerated
    `hashes.json`.
-7. Test on the test forum per [TESTING.md](TESTING.md).
+8. Test on the test forum per [TESTING.md](TESTING.md).
 
 ## Adding a database change
 
