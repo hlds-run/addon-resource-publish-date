@@ -31,11 +31,11 @@ Follow [INSTALL.md](INSTALL.md). Confirm:
 
 - [ ] Add-on installs and enables without a requirement error
 - [ ] **Tools → File Check** shows no unexpected content for the add-on
-- [ ] **Options → Resource publish date** exists and lists all seven settings
+- [ ] **Options → Resource publish date** exists and lists all six settings
 - [ ] `php src/cmd.php hlds-run-rpd:import-translation` lists languages, and the
       Russian row shows a shipped translation rather than `none`
 - [ ] **Admin CP → Phrases** for the Russian language shows Russian text for
-      `option.hldsRunRpdEnabled`, without the CLI having been run - install
+      `option.hldsRunRpdScope`, without the CLI having been run - install
       imports translations on its own. **This is the check that carries the whole
       release.** Do not substitute the error-log line: installed from the Admin CP
       it appears, installed from `cmd.php` XenForo discards it silently, so its

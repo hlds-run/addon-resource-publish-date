@@ -16,7 +16,37 @@ prefix anywhere.
 
 ## Unreleased
 
-Nothing yet. Add entries here as you go, one line per user-visible change.
+### Removed
+
+- **The `hldsRunRpdEnabled` master switch.** It duplicated the disable button on
+  **Admin CP → Add-ons**, and two switches for one state is one more thing to
+  explain when a date did or did not move — and the wrong one to reach for under
+  pressure, since an option in a settings group is harder to find than a row in
+  the add-on list.
+
+  Nothing is lost. Disabling the add-on unloads its class extensions, so
+  `onApprove()` is never called and the board behaves exactly like stock XenForo,
+  immediately — which is what the option did.
+
+  **If you had it turned off, disable the add-on instead.** The remaining six
+  settings are unaffected, and an add-on that was switched off in the options was
+  already doing nothing.
+
+  Taken with it, because it existed only to report that state:
+  `PublishDateManager::isEnabled()`, `BumpResult::SKIPPED_DISABLED` and the
+  `hlds_run_rpd_reason_disabled` phrase. A disabled add-on never loads the code
+  that would have reported that reason.
+
+### For administrators
+
+No setting changes meaning, and no schema change, so `xf:addon-upgrade` only
+refreshes the file hashes and the phrase metadata.
+
+The `xf_option` row for `hldsRunRpdEnabled` is either dropped by the data rebuild
+or left behind unread, depending on what XenForo does with an option that is no
+longer in `_data/`. Either is harmless — nothing references it — and
+[UPGRADE.md](docs/UPGRADE.md) says so. Do not delete it by hand: a rollback would
+want it back.
 
 ---
 

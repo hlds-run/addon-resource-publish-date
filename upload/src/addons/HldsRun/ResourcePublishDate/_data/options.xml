@@ -9,12 +9,12 @@
 
     Defaults are deliberately conservative: the add-on only touches content when
     it is genuinely being published for the first time.
-  -->
 
-  <option option_id="hldsRunRpdEnabled" edit_format="onoff" data_type="boolean" advanced="0">
-    <default_value>1</default_value>
-    <relation group_id="hldsRunRpd" display_order="10"/>
-  </option>
+    There is deliberately no "enabled" option. Disabling the add-on on Admin CP ->
+    Add-ons unloads its class extensions, so onApprove() is never called and the
+    behaviour is stock XenForo; a second switch saying the same thing is a second
+    thing to explain when a date did or did not move.
+  -->
 
   <option option_id="hldsRunRpdScope" edit_format="radio" data_type="string" advanced="0">
     <default_value>first</default_value>
