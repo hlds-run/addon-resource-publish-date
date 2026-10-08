@@ -22,9 +22,6 @@
   <phrase title="option_group.hldsRunRpd" version_id="1000070" version_string="1.0.0"><![CDATA[Resource publish date]]></phrase>
   <phrase title="option_group_description.hldsRunRpd" version_id="1000070" version_string="1.0.0"><![CDATA[When a moderator approves a resource that has been waiting in the approval queue, XenForo only changes its visibility - the resource keeps the date it was submitted with. As a result it can appear deep inside the "new resources" lists. These settings control moving the publish date to the moment of approval. Documentation and support: github.com/hlds-run/addon-resource-publish-date.]]></phrase>
 
-  <phrase title="option.hldsRunRpdEnabled" version_id="1000070" version_string="1.0.0"><![CDATA[Shift publish dates when content is approved]]></phrase>
-  <phrase title="option_explain.hldsRunRpdEnabled" version_id="1000070" version_string="1.0.0"><![CDATA[Master switch. When off, the add-on does nothing at all and behaves exactly like stock XenForo. Turning this off is the fastest way to undo the add-on's effect without uninstalling it.]]></phrase>
-
   <phrase title="option.hldsRunRpdScope" version_id="1000070" version_string="1.0.0"><![CDATA[When to shift dates]]></phrase>
   <phrase title="option_explain.hldsRunRpdScope" version_id="1000070" version_string="1.0.0"><![CDATA[Decides whether an approval that is not the first one (unapprove, edit, moderate again, approve) is allowed to move the date again. "Only the first approval" is the safe choice: a resource that was published once will never jump back to the top of the lists.]]></phrase>
   <phrase title="hlds_run_rpd_scope_first_approval" version_id="1000070" version_string="1.0.0"><![CDATA[Only the first approval]]></phrase>
@@ -49,7 +46,6 @@
   <phrase title="option_explain.hldsRunRpdLogToModeratorLog" version_id="1000070" version_string="1.0.0"><![CDATA[Adds a moderator log entry for every date shift, so the change is auditable next to the approval entry. The backfill command disables this by default because moderator log entries need an HTTP request in order to resolve the moderator's IP address.]]></phrase>
 
   <phrase title="hlds_run_rpd_reason_bumped" version_id="1000070" version_string="1.0.0"><![CDATA[dates moved to the approval time]]></phrase>
-  <phrase title="hlds_run_rpd_reason_disabled" version_id="1000070" version_string="1.0.0"><![CDATA[add-on is switched off]]></phrase>
   <phrase title="hlds_run_rpd_reason_disabled_for_type" version_id="1000070" version_string="1.0.0"><![CDATA[shifting is switched off for this content type]]></phrase>
   <phrase title="hlds_run_rpd_reason_category_excluded" version_id="1000070" version_string="1.0.0"><![CDATA[category is on the exclusion list]]></phrase>
   <phrase title="hlds_run_rpd_reason_below_minimum_age" version_id="1000070" version_string="1.0.0"><![CDATA[spent less than the configured minimum time in the queue]]></phrase>

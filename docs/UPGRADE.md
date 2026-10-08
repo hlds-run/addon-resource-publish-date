@@ -18,6 +18,11 @@ Pay attention to any entry mentioning:
 
 - a new option - it will be created with its default value; decide whether the
   default is right for this board;
+- a **removed** option - it stops being configured, and its row in `xf_option` is
+  either dropped by the data rebuild or left behind unread. Which of those happens
+  is XenForo's business, not ours, and neither matters: nothing reads it. Check
+  with `SELECT * FROM xf_option WHERE option_id = '...'` if you want to know
+  rather than guess;
 - a change in the meaning of an existing option;
 - a database change - version 1.x has none; if a future version adds one, the
   changelog says so and names the schema step.
@@ -77,8 +82,8 @@ php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate
 ```
 
 Rolling back does not un-shift dates that were already shifted. To stop future
-shifts without a deploy, set `option.hldsRunRpdEnabled = off` in the Admin CP -
-that is always the first thing to try, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+shifts without a deploy, disable the add-on on **Admin CP → Add-ons** - that is
+always the first thing to try, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 
 ---
 

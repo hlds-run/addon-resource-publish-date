@@ -8,16 +8,17 @@ there is exactly one place where a default is defined.
 
 ---
 
-## `hldsRunRpdEnabled` — master switch
+## Turning the add-on off
 
-**Default: on.**
+There is no on/off option, and that is deliberate. Disabling the add-on on
+**Admin CP → Add-ons** unloads its class extensions, so `onApprove()` is never
+called and behaviour is identical to stock XenForo — instantly, with no deploy and
+no rebuild.
 
-When off, both class extensions still run but `evaluateResource()` and
-`evaluateThread()` return immediately, so behaviour is identical to stock
-XenForo.
-
-Use it as the emergency stop: turning it off takes effect on the next approval
-with no deploy and no rebuild.
+An `hldsRunRpdEnabled` switch shipped through 1.2.1 and said the same thing in a
+second place. Two switches for one state is one more thing to explain when a date
+did or did not move, and the wrong one to reach for under pressure: an option in
+this group is harder to find than a row in the add-on list.
 
 ## `hldsRunRpdScope` — when to shift
 

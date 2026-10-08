@@ -28,10 +28,10 @@ are `<phrase>` elements with **all** of these attributes, because
 `XF\Service\Phrase\ImportService::importFromXml()` reads them off the node itself:
 
 ```xml
-<phrase title="option.hldsRunRpdEnabled"
+<phrase title="option.hldsRunRpdScope"
         addon_id="HldsRun/ResourcePublishDate"
-        version_id="1000010"
-        version_string="1.0.0"><![CDATA[Shift publish dates when content is approved]]></phrase>
+        version_id="1000070"
+        version_string="1.0.0"><![CDATA[When to shift dates]]></phrase>
 ```
 
 A real entry from `_translations/ru.xml` differs only in the text node, which is

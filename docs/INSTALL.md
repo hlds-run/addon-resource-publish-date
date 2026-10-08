@@ -131,13 +131,16 @@ The defaults are the conservative ones and are correct for most boards:
 
 | Setting | Default | Recommendation |
 |---|---|---|
-| Shift publish dates when content is approved | on | keep on |
 | When to shift dates | only the first approval | keep; "every approval" is a deliberate policy choice |
 | Resources | on | keep |
 | Resource discussion threads | on | keep, unless resource threads are closed for discussion anyway |
 | Minimum time in the moderation queue | 0 | raise only if instant approvals should not count |
 | Excluded resource categories | empty | fill in for long-curation categories |
 | Record date shifts in the moderator log | on | keep |
+
+There is no on/off switch. To stop the add-on doing anything, disable it on
+**Admin CP → Add-ons** — that is the switch XenForo owns, and it takes effect on
+the next approval.
 
 ## 5. Optional: fix content that was already published
 
@@ -170,6 +173,6 @@ php src/cmd.php xf:addon-uninstall HldsRun/ResourcePublishDate
 There is no database state to clean up: the add-on creates no tables and adds no
 columns. Already-shifted dates are *not* reverted, because the original values are
 not stored anywhere - this is deliberate, see [BEHAVIOR.md](BEHAVAVIOR.md) §9 for
-why inventing a publish-date column would be worse. Disabling the add-on
-(`option.hldsRunRpdEnabled = off`) stops all future shifts immediately and is the
-recommended first step if something looks wrong.
+why inventing a publish-date column would be worse. Disabling the add-on on
+**Admin CP → Add-ons** stops all future shifts immediately and is the recommended
+first step if something looks wrong.
