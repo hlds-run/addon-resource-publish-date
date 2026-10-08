@@ -551,6 +551,187 @@ function checkOptionRowHelpers(array $phpFiles): void
 	}
 }
 
+/**
+ * XenForo's own aabbccde version_id scheme.
+ *
+ * `version_id` is the integer XenForo compares to decide whether an add-on is
+ * out of date, and it is what it appends to a template's cache-buster, so a
+ * wrong value is not cosmetic: the wrong value means stale JS/CSS in browsers
+ * and upgrade steps that never fire. XenForo's own validator only checks that
+ * the field is an integer - `xf-addon:validate-json` accepts every wrong
+ * number this repository has ever shipped.
+ *
+ * The scheme is positional and the digits overlap, which is why the widths are
+ * uneven:
+ *
+ *   a    major version, one digit - 1 for this add-on, 2 for XF 2.x
+ *   bb   minor version, two digits, 00-99
+ *   cc   patch version, two digits, 00-99
+ *   d    state: 1 alpha, 3 beta, 5 release candidate, 7 stable
+ *   e    state version, one digit, 0-9
+ *
+ * so the id is major*1000000 + minor*10000 + patch*100 + state*10 + stateVer.
+ * A 1.x add-on therefore reads as 1|bb|cc|d|e and XF 2.x as 2|bb|cc|d|e; there
+ * is no leading zero, and the whole number is seven digits for a single-digit
+ * major. XenForo's documented examples all confirm this, and this repository
+ * verified the formula against every one of them: 1.7.3 RC 4 is 1070354,
+ * 1.5.0 Beta 3 is 1050033, XF 2.0.0 Stable is 2000070 and XF 2.2.0 Stable is
+ * 2020070. The commonly repeated "eight digit" framing is a misreading of the
+ * mask, not a second encoding - see docs/VERSIONING.md.
+ */
+function expectedVersionId(string $versionString): ?int
+{
+	$pattern = '/^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)'
+		. '\s*(?<word>Alpha|Beta|RC|Stable)?\s*(?<number>[0-9])?$/i';
+
+	if (preg_match($pattern, $versionString, $m) !== 1) {
+		return null;
+	}
+
+	// No state word means Stable, which is what every released version_string
+	// in this repository carries.
+	$stages = ['alpha' => 1, 'beta' => 3, 'rc' => 5, 'stable' => 7];
+	$stage = ($m['word'] ?? '') !== '' ? $stages[strtolower($m['word'])] : 7;
+	$stateVersion = ($m['number'] ?? '') !== '' ? (int) $m['number'] : 0;
+
+	$major = (int) $m['major'];
+	$minor = (int) $m['minor'];
+	$patch = (int) $m['patch'];
+
+	// A single-digit major is the whole basis of the encoding: two digits here
+	// would collide with minor, and the resulting id would decode to something
+	// else entirely.
+	if ($major < 1 || $major > 9 || $minor > 99 || $patch > 99) {
+		return null;
+	}
+
+	return ($major * 1000000)
+		+ ($minor * 10000)
+		+ ($patch * 100)
+		+ ($stage * 10)
+		+ $stateVersion;
+}
+
+/**
+ * An id under the scheme above. The check is on the value's shape, not on its
+ * agreement with version_string: the state digit is always odd and never 0 or
+ * 9, and the leading digit is a major version. 1000016 - what this repository
+ * shipped through 1.2.0 - is a plain counter and fails both tests.
+ */
+function isWellFormedVersionId($value): bool
+{
+	if (!is_int($value) || $value < 1000000 || $value > 99999999) {
+		return false;
+	}
+
+	// State digit: the tens place of the last two digits.
+	return in_array((int) (($value % 100) / 10), [1, 3, 5, 7], true);
+}
+
+function checkVersions(string $addonRoot): void
+{
+	$path = $addonRoot . '/addon.json';
+	$manifest = json_decode(readText($path), true);
+
+	if (!is_array($manifest)) {
+		fail('addon.json: not valid JSON, or unreadable');
+		return;
+	}
+
+	$versionString = $manifest['version_string'] ?? null;
+	$versionId = $manifest['version_id'] ?? null;
+
+	if (($manifest['version_id'] ?? null) !== null && !is_int($versionId)) {
+		fail('addon.json: version_id must be a JSON integer, not a string');
+	}
+
+	if (!isWellFormedVersionId($versionId)) {
+		fail('addon.json: version_id ' . var_export($versionId, true) . ' is not a valid '
+			. 'aabbccde id (a major, bb minor, cc patch, d state, e state version). '
+			. 'A plain counter is what this repository shipped through 1.2.0.');
+	} elseif (is_string($versionString)) {
+		$expected = expectedVersionId($versionString);
+
+		if ($expected === null) {
+			note('addon.json: could not parse version_string "' . $versionString . '" to check '
+				. 'version_id against it. Expected a form like 1.2.0 or 1.2.0 Beta 1.');
+		} elseif ($expected !== $versionId) {
+			fail('addon.json: version_id is ' . $versionId . ' but version_string "'
+				. $versionString . '" encodes to ' . $expected
+				. '. XenForo offers an upgrade by comparing these two, so a mismatch means '
+				. 'either the rebuild never runs or browsers keep serving cached JS/CSS.');
+		}
+	}
+
+	// A "require" floor is compared against the installed product's own
+	// version_id, so it has to be that product's real id and nothing else.
+	// 2030010 was here for a long time: a hand-written number that decoded as
+	// nothing, one digit off the true 2.3.0 Stable id of 2030070.
+	foreach (($manifest['require'] ?? []) as $product => $requirement) {
+		if (!is_array($requirement) || !isset($requirement[0])) {
+			fail("addon.json: require.$product must be [version_id, description]");
+			continue;
+		}
+
+		$floor = $requirement[0];
+
+		if (!isWellFormedVersionId($floor)) {
+			fail("addon.json: require.$product is " . var_export($floor, true)
+				. ', which is not a valid aabbccde id. XenForo compares this number against '
+				. "the installed product's own version_id, so a wrong floor either blocks a "
+				. 'supported forum or admits an unsupported one.');
+		} elseif (((int) (($floor % 100) / 10)) !== 7) {
+			// The strongest form of this check available without shipping a table
+			// of product versions: a dependency floor is the oldest release that
+			// works, which is always a stable one. This is the test 2030010 fails
+			// - its state digit is 1, so it decodes as "2.3.0 Alpha", a floor that
+			// no XenForo release has ever satisfied.
+			fail("addon.json: require.$product is $floor, whose state digit is "
+				. (int) (($floor % 100) / 10)
+				. ' rather than 7. A dependency floor names a stable release, so the '
+				. "state digit is always 7. Decoded, this claims a pre-release that the "
+				. 'installed forum would never report.');
+		}
+	}
+}
+
+/**
+ * A phrase's version_id records which add-on version last changed its text, and
+ * XenForo rewrites the stored phrase when that number rises. It must therefore
+ * follow the same scheme as the add-on's, and it must never fall between two
+ * released add-on ids - that would silently undo a phrase change on upgrade.
+ */
+function checkPhraseVersions(string $dataDir, string $translationsDir, int $addonVersionId): void
+{
+	foreach ([
+		'_data/phrases.xml' => $dataDir . '/phrases.xml',
+		'_translations/ru.xml' => $translationsDir . '/ru.xml',
+	] as $label => $path) {
+		if (!is_file($path)) {
+			continue;
+		}
+
+		foreach (readFlatXml($path, $label) as $element) {
+			if ($element['name'] !== 'phrase') {
+				continue;
+			}
+
+			$title = $element['attrs']['title'] ?? '(untitled)';
+			$phraseVersionId = (int) ($element['attrs']['version_id'] ?? 0);
+
+			if (!isWellFormedVersionId($phraseVersionId)) {
+				fail("$label: phrase '$title' has version_id "
+					. var_export($element['attrs']['version_id'] ?? null, true)
+					. ', which is not a valid aabbccde id.');
+			} elseif ($phraseVersionId > $addonVersionId) {
+				fail("$label: phrase '$title' has version_id $phraseVersionId, higher than the "
+					. "add-on's own $addonVersionId. The phrase would claim to come from a "
+					. 'release that does not exist.');
+			}
+		}
+	}
+}
+
 // --------------------------------------------------------------------------- main
 
 $phpFiles = addonPhpFiles($addonRoot);
@@ -559,6 +740,11 @@ if (!$phpFiles) {
 	fail('no PHP files found under ' . $addonRoot);
 }
 
+checkVersions($addonRoot);
+checkPhraseVersions($dataDir, $translationsDir, (int) (json_decode(
+	readText($addonRoot . '/addon.json'),
+	true
+)['version_id'] ?? 0));
 checkClassExtensions($dataDir, $addonRoot, $phpFiles);
 checkNamespaces($phpFiles, $addonRoot);
 checkPhrases($dataDir, $translationsDir, $phpFiles, $addonRoot);
