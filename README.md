@@ -2,7 +2,7 @@
 
 [![Release](https://img.shields.io/github/v/release/hlds-run/addon-resource-publish-date?style=flat&label=release&color=blue)](https://github.com/hlds-run/addon-resource-publish-date/releases/latest)
 [![CI](https://github.com/hlds-run/addon-resource-publish-date/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/hlds-run/addon-resource-publish-date/actions/workflows/ci.yml)
-[![Licence](https://img.shields.io/github/license/hlds-run/addon-resource-publish-date?style=flat&label=licence&color=blue)](LICENSE.md)
+[![Licence](https://img.shields.io/badge/licence-MIT-blue?style=flat)](LICENSE.md)
 [![Downloads](https://img.shields.io/github/downloads/hlds-run/addon-resource-publish-date/total?style=flat&label=downloads&color=blue)](https://github.com/hlds-run/addon-resource-publish-date/releases)
 [![XenForo](https://img.shields.io/badge/XenForo-2.3%2B-blue?style=flat)](docs/INSTALL.md)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?style=flat)](docs/INSTALL.md)
