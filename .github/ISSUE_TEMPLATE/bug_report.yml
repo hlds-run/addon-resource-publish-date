@@ -24,47 +24,36 @@ body:
           required: false
         - label: I can reproduce this on a test forum, not only on production
           required: false
-  - type: dropdown
+  - type: input
     id: version
     attributes:
       label: Add-on version
       description: Shown in Admin CP -> Add-ons -> Installed add-ons.
-      options:
-        - 1.0.0
-        - Other (describe below)
+      placeholder: "1.2.1"
     validations:
       required: true
-  - type: dropdown
+  - type: input
     id: xenforo
     attributes:
       label: XenForo version
-      options:
-        - 2.3.2
-        - 2.3.0 / 2.3.1
-        - Other 2.3.x
-        - Other
+      description: The full version string, e.g. 2.3.2.
+      placeholder: "2.3.2"
     validations:
       required: true
-  - type: dropdown
+  - type: input
     id: xfrm
     attributes:
       label: XenForo Resource Manager version
-      options:
-        - 2.3.2
-        - Other 2.3.x
-        - Other
+      description: The full version string, e.g. 2.3.2. Write "none" if Resource Manager is not installed.
+      placeholder: "2.3.2"
     validations:
       required: true
-  - type: dropdown
+  - type: input
     id: php
     attributes:
       label: PHP version
-      options:
-        - "7.4"
-        - "8.0"
-        - "8.1"
-        - "8.2"
-        - "8.3 or newer"
+      description: Output of php -v, major and minor version, e.g. 8.2.
+      placeholder: "8.2"
     validations:
       required: true
   - type: textarea
