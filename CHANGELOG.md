@@ -5,16 +5,74 @@ All notable changes to this add-on are recorded here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the project uses [semantic versioning](https://semver.org/).
 
-`version_id` in `addon.json` must be bumped for every release. The CLI command
-`php src/cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate` does it for
-you, including updating the `version_id` / `version_string` attributes on every
-phrase. See [docs/DEVELOPING.md](docs/DEVELOPING.md) for the naming rules - the
-git tag, the release title and `version_string` are the same string, with no `v`
+`version_id` in `addon.json` is `version_string` encoded, not a counter, and it
+must be recomputed for every release - the CLI command
+`php src/cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate --version-id XXXXXXXX --version-string X.X.X`
+does it for you, including updating the `version_id` / `version_string`
+attributes on every phrase. See [docs/VERSIONING.md](docs/VERSIONING.md) for the
+mask, and [docs/DEVELOPING.md](docs/DEVELOPING.md) for the naming rules - the git
+tag, the release title and `version_string` are the same string, with no `v`
 prefix anywhere.
 
 ## Unreleased
 
 Nothing yet. Add entries here as you go, one line per user-visible change.
+
+---
+
+## [1.2.1] - 2026-10-08
+
+Three numbers in `addon.json` were wrong in a way nothing was checking. Nobody
+was paged by this and no forum broke; the cost was that the versioning was
+fiction - an add-on whose `version_id` did not correspond to its
+`version_string`, requiring a XenForo release that does not exist, and shipping
+under a scheme whose whole purpose is to keep browsers off stale JS/CSS.
+
+### For administrators
+
+Nothing to do. This changes no behaviour and no data. There is no schema step,
+so `php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate` only refreshes
+the file hashes and the phrase metadata; running it is optional. **Clear your
+browser cache** if you want to be certain you are not looking at a cached
+template from 1.2.0.
+
+### Fixed
+
+- **`version_id` was a hand-maintained counter instead of the version it claims
+  to be.** `addon.json` carried `1000016` for `1.2.0`, and each release before
+  it consumed one number. XenForo compares this value to decide whether the add-on
+  is out of date and appends it to template cache-busters, so the number being
+  arbitrary rather than the version encoded left browsers free to keep serving
+  the previous release's JS/CSS. It is now `1020170`, the correct encoding of
+  `1.2.1` Stable. It is also higher than the old value, so existing installs are
+  offered the upgrade rather than being told they are current.
+
+- **The `require` floor named a XenForo release that does not exist.** Both `XF`
+  and `XFRM` required `2030010`; XenForo 2.3.0 Stable is `2030070`. The bad value
+  decodes as "2.3.0 Alpha", so it was a floor no installed forum could report
+  satisfying. Both are now `2030070`.
+
+- **Phrase `version_id` values used the old counter** and are re-encoded:
+  `1000010` → `1000070` (46 phrases, text unchanged since 1.0.0) and `1000016` →
+  `1020070` (the one phrase added in 1.2.0).
+
+### Added
+
+- **`tools/check.php` now validates versioning.** Three checks that each catch
+  one of the errors above: the `version_id` mask, `version_id` against
+  `version_string`, and the state digit of a `require` floor. XenForo's own
+  `xf-addon:validate-json` cannot catch any of them - it verifies that
+  `version_id` is an integer and nothing more, so every wrong number this add-on
+  has ever shipped passed it cleanly.
+
+### Changed
+
+- **`Setup.php` documents the `upgradeXXXXXStepY` naming rule**, where `XXXXX` is
+  the target `version_id` with no separators. No steps exist today; a mismatched
+  number would be skipped silently, with no error and no log line.
+
+- **[docs/VERSIONING.md](docs/VERSIONING.md)** records the mask, the current
+  values and the release procedure.
 
 ---
 
