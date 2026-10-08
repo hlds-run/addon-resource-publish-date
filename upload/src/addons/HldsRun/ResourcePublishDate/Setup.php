@@ -18,6 +18,16 @@
  *
  * Do not add schema steps here without bumping version_id in addon.json and
  * updating CHANGELOG.md and docs/UPGRADE.md.
+ *
+ * Step method names are upgradeXXXXXStepY, where XXXXX is the *target*
+ * version_id with no separators - not the version string and not a counter.
+ * Version 1.2.1 Stable has version_id 1020170 (see docs/VERSIONING.md), so a
+ * step shipped in it is upgrade1020170Step1(). The number is what XenForo
+ * looks for when it decides which steps to run, and StepRunnerUpgradeTrait only
+ * runs the ones matching the version being upgraded *to*. A method whose number
+ * does not match is silently skipped: no error, no log line, the migration just
+ * never happens. tools/check.php cannot verify this - it has no way to know
+ * which id a step was meant for - so the pairing is checked by hand.
  */
 
 namespace HldsRun\ResourcePublishDate;
