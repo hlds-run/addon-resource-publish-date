@@ -164,13 +164,16 @@ surface.
 | A new option, a new CLI flag, new behaviour | minor |
 | Anything writing different data | minor, and an `UPGRADE.md` note |
 
-`version_id` is a monotonically increasing integer, not derived from the version
-string. Current: `1000015` for `1.1.3`. The 1.0.x/1.1.x series each consumed one.
+`version_id` is **not** a counter to be incremented. It is `version_string`
+encoded, and getting it wrong is silent - see
+[VERSIONING.md](VERSIONING.md) for the mask and the current value (`1020170` for
+`1.2.1`). This repository shipped a plain counter through 1.2.0, and a
+wrong `require` floor alongside it.
 
 A **phrase's** `version_id` is separate and follows XenForo's own rule: it exists so
 an upgrade knows a changed text must be rewritten, so it moves only when a phrase's
 text changed. A newly added phrase needs no bump. All 46 master phrases currently
-sit at `1000010`, carried over from 1.0.0 - which is correct, since nothing has
+sit at `1000070`, carried over from 1.0.0 - which is correct, since nothing has
 changed a phrase's text since. If you edit one, bump it.
 
 ### 5. Changelog, in the shape the release body needs

@@ -89,8 +89,8 @@ explicitly:
 
 ```json
 "require": {
-    "XF":  [2030010, "XenForo 2.3.0 or newer"],
-    "XFRM": [2030010, "XenForo Resource Manager 2.3.0 or newer"]
+    "XF":  [2030070, "XenForo 2.3.0 or newer"],
+    "XFRM": [2030070, "XenForo Resource Manager 2.3.0 or newer"]
 }
 ```
 
