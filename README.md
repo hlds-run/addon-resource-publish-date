@@ -1,5 +1,16 @@
 # Resource publish date
 
+[![Release](https://img.shields.io/github/v/release/hlds-run/addon-resource-publish-date?style=flat&label=release&color=blue)](https://github.com/hlds-run/addon-resource-publish-date/releases/latest)
+[![CI](https://github.com/hlds-run/addon-resource-publish-date/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/hlds-run/addon-resource-publish-date/actions/workflows/ci.yml)
+[![Licence](https://img.shields.io/github/license/hlds-run/addon-resource-publish-date?style=flat&label=licence&color=blue)](LICENSE.md)
+[![Downloads](https://img.shields.io/github/downloads/hlds-run/addon-resource-publish-date/total?style=flat&label=downloads&color=blue)](https://github.com/hlds-run/addon-resource-publish-date/releases)
+[![XenForo](https://img.shields.io/badge/XenForo-2.3%2B-blue?style=flat)](docs/INSTALL.md)
+[![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?style=flat)](docs/INSTALL.md)
+
+<p align="center">
+    <img width="700" height="580" alt="Options" src="https://github.com/user-attachments/assets/40b3eda4-e64d-4c70-8f7c-fa13402a0083" />
+</p>
+
 XenForo add-on that moves the **publish date** of a resource to the moment a
 moderator approves it.
 
