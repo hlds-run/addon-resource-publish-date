@@ -159,8 +159,9 @@ php cmd.php hlds-run-rpd:backfill --days=30 --threads
 ```
 
 The command is idempotent: it only touches resources whose stored publish date is
-*newer* than their approval date, and it works oldest-approval-first, so running
-it repeatedly in batches converges. Read
+*older* than their approval date - a resource updated after it was approved keeps
+its newer date - and it works oldest-approval-first, so running it repeatedly in
+batches converges. Read
 [TROUBLESHOOTING.md](TROUBLESHOOTING.md#recovering-from-a-mistake) before running
 it on production.
 

@@ -45,6 +45,18 @@ Then verify, in this order:
    new `_data/options.xml`, which is a signal to stop and investigate.
 4. `php cmd.php xf:addon-upgrade` is idempotent, so running it twice is safe.
 
+### Upgrading to 1.0.1
+
+Nothing to do. No schema step, no option added or renamed, no phrase text
+changed - the phrase `version_id` stayed at `1000070` on purpose, so the rebuild
+will not overwrite wording an administrator customised.
+
+The one thing worth knowing: if you ran `hlds-run-rpd:backfill` on 1.0.0 and it
+reported that there was nothing to do, it was lying - its selection query had the
+comparison backwards and discarded everything it found. Run it again, still
+starting with `--dry-run`, and read [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+before applying anything.
+
 ### When a release renames an `edit_format="callback"` method
 
 `xf:addon-upgrade` is not a formality in this case. The callback name is stored

@@ -14,6 +14,49 @@ mask, and [docs/DEVELOPING.md](docs/DEVELOPING.md) for the naming rules - the gi
 tag, the release title and `version_string` are the same string, with no `v`
 prefix anywhere.
 
+## [1.0.1] - 2026-10-09
+
+Two fixes, both found by running the documented install cycle end to end on a
+test forum (XenForo 2.3.7) rather than by any check in CI.
+
+### Fixed
+
+- **`hlds-run-rpd:backfill` could never do anything.** Its query selected
+  resources whose stored publish date was *newer* than their approval date,
+  which is the one case the command must not touch: such a resource has an
+  update published after it was approved, and re-dating it would move it
+  backwards in time. `PublishDateManager::evaluateResourceStructure()` rejected
+  every one of them, so the command reported "nothing to do" on every board,
+  forever - while the moderator log held 39 rows it had just selected and
+  discarded. The comparison is now the other way round, which selects what the
+  add-on exists to fix: approved before it was installed, published before it
+  was approved. On the test board that is 182 resources, all of which pass the
+  structural check. `docs/INSTALL.md`, `docs/TROUBLESHOOTING.md` and the
+  `--help` text said the same wrong thing as the code and are corrected.
+
+  **No check in CI can cover this.** It is a comparison direction inside a SQL
+  string, and the four passes in `tools/` see structure, not query semantics.
+  What carries it is the manual checklist in `docs/TESTING.md` §7, which now
+  asks for the command's count and the diagnostic SQL's count to agree - a
+  command that reports 0 while the SQL returns rows is the signature of this
+  bug.
+
+- **Every documented command was `php src/cmd.php`.** XenForo 2.3 keeps
+  `cmd.php` in the root of the installation; there is no `src/cmd.php`, so the
+  install, uninstall, upgrade, backfill and translation commands were all
+  unrunnable as written. The command names were right. The wrong path was also
+  in the hint the translation command prints after its language table, and in
+  the header of `_data/phrases.xml`.
+
+### Nothing to do
+
+No database change, no new option, no phrase text changed - so no phrase
+`version_id` moved, and nothing here needs an action from an administrator.
+Approvals are unaffected: the fix is in a CLI command that has to be run by
+hand, and it only writes when it is run.
+
+[1.0.1]: https://github.com/hlds-run/addon-resource-publish-date/releases/tag/1.0.1
+
 ## [1.0.0] - 2026-10-08
 
 First release.

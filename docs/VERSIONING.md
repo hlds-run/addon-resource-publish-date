@@ -16,21 +16,22 @@ that only increases gives you half of that and none of the meaning.
 
 ## Current values
 
-The current release is **1.0.0**.
+The current release is **1.0.1**.
 
 | Field | Value | Derived from |
 |---|---|---|
-| `version_id` in `addon.json` | `1000070` | `1.0.0` Stable under the `aabbccde` mask |
-| `version_string` in `addon.json` | `1.0.0` | — |
+| `version_id` in `addon.json` | `1000170` | `1.0.1` Stable under the `aabbccde` mask |
+| `version_string` in `addon.json` | `1.0.1` | — |
 | `require.XF` | `2030070` | XenForo 2.3.0 Stable |
 | `require.XFRM` | `2030070` | XenForo Resource Manager 2.3.0 Stable |
 | Phrase `version_id` (44 phrases) | `1000070` | every phrase shipped in 1.0.0 |
 
-Every phrase carries `1000070`, because `1.0.0` is where every phrase's text was
-last changed. That is the point of the per-phrase number: a phrase is re-imported
-over an administrator's wording only when its own `version_id` rises, so a phrase
-whose text did not change must not be bumped. Raise it only when the text changes,
-and to the `version_id` of the release that changed it.
+Every phrase still carries `1000070`, because `1.0.0` is where every phrase's text
+was last changed and `1.0.1` changed no phrase text. That is the point of the
+per-phrase number: a phrase is re-imported over an administrator's wording only
+when its own `version_id` rises, so a phrase whose text did not change must not be
+bumped. Raise it only when the text changes, and to the `version_id` of the
+release that changed it.
 
 There is no state word in `version_string`: the release is stable, so the state
 defaults to `Stable` and the digit `7`. Had the version been named `1.0.0 Beta 2`,
@@ -67,7 +68,8 @@ back into the same version.
 
 | Version | `version_id` |
 |---|---|
-| 1.0.0 Stable (this add-on, current) | `1000070` |
+| 1.0.1 Stable (this add-on, current) | `1000170` |
+| 1.0.0 Stable (the first release) | `1000070` |
 | 1.2.3 Stable (this add-on) | `1020370` |
 
 All four examples in XenForo's documentation - `1.7.3 RC 4`, `1.5.0 Beta 3`,
@@ -130,9 +132,9 @@ have to match the add-on's current `version_id`, and it moves only when the text
 moves.
 
 The practical consequence: all 44 phrases sit at `1000070`, because that is the
-release they all shipped in. Raising a phrase's `version_id` makes XenForo
-rewrite the stored text, which overwrites whatever an administrator customised
-in Admin CP → Phrases.
+release they all shipped in, and 1.0.1 changed no phrase text. Raising a phrase's
+`version_id` makes XenForo rewrite the stored text, which overwrites whatever an
+administrator customised in Admin CP → Phrases.
 
 The rule for a new phrase is the add-on's current `version_id`. The rule for a
 changed one is the `version_id` of the release whose text changed.

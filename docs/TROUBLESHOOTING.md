@@ -188,9 +188,11 @@ trap when writing examples of CLI flags inside a comment.
 
 ### Backfill says "nothing to do"
 
-It only considers resources whose stored publish date is **newer** than their
-approval date. If your old resources already look right, there is nothing to fix.
-If you expected it to find something, check:
+It only considers resources whose stored publish date is **older** than their
+approval date: approved before the add-on was installed, published before it was
+approved. A resource that was updated after its approval keeps its newer date -
+moving that to the approval would send it backwards in time. If you expected it to
+find something, check:
 
 ```sql
 SELECT r.resource_id, r.last_update, MIN(l.log_date) AS approved
@@ -198,14 +200,21 @@ FROM xf_rm_resource AS r
 JOIN xf_moderator_log AS l
   ON l.content_type = 'resource' AND l.content_id = r.resource_id AND l.action = 'approve'
 WHERE r.resource_state = 'visible'
-GROUP BY r.resource_id, r.last_update
-HAVING approved < r.last_update
+GROUP BY r.resource_id, r.last_update, r.resource_date
+HAVING approved > r.last_update
+   AND approved > r.resource_date
 LIMIT 20;
 ```
 
 Empty result: no resource qualifies. Either the moderator log has no `approve`
-entries for those resources, or their dates are already at or before their
+entries for those resources, or their dates are already at or after their
 approval time.
+
+Two reasons the log can be empty for content you remember approving:
+`moderatorLogLength` (**ACP → Options → Logging**) prunes old rows, and a
+resource approved before the moderator log existed has no `approve` entry at all.
+The second one is the more common: XenForo's own moderator log retention aside,
+a forum that never moderated anything has nothing to replay.
 
 ---
 

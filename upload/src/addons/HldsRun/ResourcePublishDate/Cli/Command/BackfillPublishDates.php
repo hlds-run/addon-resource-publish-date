@@ -28,8 +28,10 @@ use XFRM\Entity\ResourceItem;
  *   - the query is bounded by --limit and ordered oldest-approval-first, so a
  *     re-run always progresses through the oldest work instead of repeating it.
  *
- * Only resources whose stored publish date is NEWER than their approval date are
- * considered, and resources in excluded categories are never touched.
+ * Only resources whose stored publish date is OLDER than their approval date are
+ * considered - the resources this add-on would have re-dated had it been
+ * installed when they were approved - and resources in excluded categories are
+ * never touched.
  *
  * @see docs/TROUBLESHOOTING.md, "Recovering from a mistake"
  */
@@ -87,7 +89,7 @@ class BackfillPublishDates extends AbstractCommand
                 'Write moderator log entries. Needs a web request context; off by default.'
             )
             ->setHelp(
-                "Only resources whose stored publish date is newer than their approval date are touched.\n"
+                "Only resources whose stored publish date is older than their approval date are touched.\n"
                 . 'Resources in excluded categories are never touched, whatever the options say.'
             );
     }
@@ -193,9 +195,21 @@ class BackfillPublishDates extends AbstractCommand
     /**
      * Visible resources that have an approval recorded, oldest approval first.
      *
-     * The "stored date is newer than the approval date" test lives in the WHERE
-     * clause because it compares a column against MIN(log_date), which MySQL
-     * accepts in HAVING as well but reads far more clearly here.
+     * "Stored date is older than the approval date" is the whole selection rule,
+     * and the direction is the entire bug this command lived with before 1.0.1:
+     * it read `<`, and so selected exactly the resources this add-on already
+     * handles. `last_update` is a copy of the post date of the newest visible
+     * update, so a resource whose stored date is *newer* than its approval has
+     * an update published after it was approved - re-dating that to the approval
+     * would move it backwards in time - and
+     * PublishDateManager::evaluateResourceStructure() rejects it as
+     * SKIPPED_ALREADY_CURRENT. The query therefore found rows and the command
+     * then reported nothing to do, forever.
+     *
+     * The correct direction selects what the add-on exists to fix: approved
+     * before it was installed, published before it was approved. Verified on
+     * test.hlds.run against XenForo 2.3.7 - 39 rows before, 0 writable; 182
+     * rows after, all of them passing the structural check.
      *
      * @return list<array{resource_id: int, approved_date: int}>
      */
@@ -212,7 +226,7 @@ class BackfillPublishDates extends AbstractCommand
             WHERE resource.resource_state = 'visible'
             GROUP BY resource.resource_id, resource.last_update, resource.resource_date
             HAVING approved_date > resource.resource_date
-                   AND approved_date < resource.last_update
+                   AND approved_date > resource.last_update
                    AND approved_date < ?
             ORDER BY approved_date ASC
             LIMIT " . (int) $limit

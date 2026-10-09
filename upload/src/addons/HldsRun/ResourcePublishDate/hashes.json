@@ -1,6 +1,6 @@
 {
-    "src/addons/HldsRun/ResourcePublishDate/addon.json": "21fa2b472862e94b1d2456063bd08bb1b9fdc245084fcb86555f0e79c5370cc0",
-    "src/addons/HldsRun/ResourcePublishDate/Cli/Command/BackfillPublishDates.php": "5f9188b40dca1e6fe707899747208780fed663ff27b4c2f77ace5baec4dc404b",
+    "src/addons/HldsRun/ResourcePublishDate/addon.json": "dea9c75bf3a4ca70f95dac0133e2c6a891c46b9c1b84ec7c172d4f3c4457025b",
+    "src/addons/HldsRun/ResourcePublishDate/Cli/Command/BackfillPublishDates.php": "e2520b868da11a7983d071731fff0e9ddaf1ce34228c3835e55d3339821d69fc",
     "src/addons/HldsRun/ResourcePublishDate/Cli/Command/ImportTranslation.php": "f7012ac54c100a300355b9a85077c57df787a2f8fa0edd993532c40ee4761152",
     "src/addons/HldsRun/ResourcePublishDate/Option/ExcludedCategories.php": "50e4882366d158b6b85ced7f43125a2d519f779d46e9e003694890da53db5322",
     "src/addons/HldsRun/ResourcePublishDate/PublishDateAddOn.php": "c43859db2d2e1787e24bcc0cbf147ecac0644df969368546d268150b9c999646",

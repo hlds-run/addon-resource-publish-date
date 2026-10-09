@@ -131,8 +131,16 @@ UPDATE xf_rm_resource_update SET post_date = <old>
  WHERE resource_update_id = <description_update_id>;
 ```
 
+The old dates must be **older** than the approval: a resource published before it
+was approved is the only thing this command acts on. That direction is what 1.0.1
+fixed, and nothing in CI can catch it - see the note at the end of this section.
+
 - [ ] `hlds-run-rpd:backfill --dry-run` lists it and writes nothing (re-check with
       the SQL above)
+- [ ] **On a board with history, the count the command prints is the count the
+      diagnostic SQL in TROUBLESHOOTING.md returns.** A command that reports 0
+      while the SQL returns rows has selected the wrong set again - that is how
+      the pre-1.0.1 bug presented: 39 rows selected, 0 writable.
 - [ ] `hlds-run-rpd:backfill` moves it and reports counts
 - [ ] A second run reports "nothing to do"
 - [ ] `--threads` also moves the resource's discussion thread
