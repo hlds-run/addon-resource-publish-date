@@ -48,6 +48,16 @@ test forum (XenForo 2.3.7) rather than by any check in CI.
   in the hint the translation command prints after its language table, and in
   the header of `_data/phrases.xml`.
 
+- **Three installation instructions were wrong, and are now verified ones.**
+  `xf:addon-install` does accept a path to a release ZIP, so the archive no
+  longer needs the Admin CP - documented with the confirmation it still asks
+  for. `xf:file-check` takes the add-on as `--addon`, not as an argument;
+  XenForo's own documentation says otherwise and 2.3.7 rejects the positional
+  form. And `xf-addon:build-release` is not a drop-in replacement for
+  `tools/build.php`: it rewrites `_data/*.xml` and `addon.json` in place and
+  produces a 57-file archive against our 16. `docs/INSTALL.md` no longer
+  recommends running it against a checkout.
+
 ### Nothing to do
 
 No database change, no new option, no phrase text changed - so no phrase

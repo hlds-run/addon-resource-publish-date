@@ -51,7 +51,12 @@ Read in this order; each file answers one question.
 
 Download the archive from the repository's releases and upload it through
 **Admin CP → Add-ons → Install Add-on → Upload ZIP**. That is the whole
-installation; there is nothing to compile and no schema to run.
+installation; there is nothing to compile and no schema to run. The same archive
+installs from a terminal - `xf:addon-install` accepts a path to a ZIP:
+
+```
+php cmd.php xf:addon-install _releases/HldsRun-ResourcePublishDate-1.0.1.zip
+```
 
 Working from a checkout instead:
 
@@ -72,6 +77,9 @@ php cmd.php hlds-run-rpd:import-translation 6
 # 5. configure it
 #    Admin CP -> Options -> Resource publish date
 ```
+
+`cmd.php` sits in the root of the XenForo installation, next to `index.php`.
+There is no `src/cmd.php` in 2.3.
 
 [docs/INSTALL.md](docs/INSTALL.md) has the full procedure, including the
 `--dry-run` backfill for resources that were already approved before the install.

@@ -22,12 +22,30 @@ To build it yourself:
 
 ```bash
 php tools/build.php
-# _releases/HldsRun-ResourcePublishDate-1.0.0.zip
+# _releases/HldsRun-ResourcePublishDate-1.0.1.zip
 ```
 
-If you have a XenForo installation to hand, `php cmd.php xf-addon:build-release
-HldsRun/ResourcePublishDate` is the better command: it runs XenForo's own
-exporter. Both produce the same archive.
+`xf-addon:build-release` is **not** a better command here, and running it in this
+repository will dirty the working tree. XenForo's exporter runs
+`xf-addon:export` first, which rewrites `_data/*.xml` from the database and
+repairs `addon.json` in place - it added `legacy_addon_id` and `icon` and
+reformatted the `require` block on a board where none of that was wrong. The
+archive it then writes is not the same one: 57 files against our 16, roughly forty
+of them empty `_data` stubs for data types this add-on does not use, written to
+`src/addons/HldsRun/ResourcePublishDate/_releases` rather than to the
+installation's `_releases`. It is a fine command for an add-on being developed
+inside an installed forum; `tools/build.php` is the one that produces the
+committed, byte-stable archive this repository releases.
+
+Installing the archive without the Admin CP works, because `xf:addon-install`
+takes a path to a ZIP as its argument and runs the same validator and extractor:
+
+```bash
+php cmd.php xf:addon-install _releases/HldsRun-ResourcePublishDate-1.0.1.zip
+```
+
+Verified on XenForo 2.3.7, including the `upload/` prefix. It still asks for
+confirmation, so script it with `printf 'y\n' |` or `-n` plus the answer piped in.
 
 ### Option B: copy the directory
 
@@ -85,6 +103,16 @@ nothing.
 Verify in the Admin CP: **Add-ons → Installed add-ons → Resource publish date**
 should be enabled, and **Tools → File Check** should list the add-on's files as
 expected with no "unexpected content" warnings.
+
+The file check from the command line takes the add-on as an **option**, not as an
+argument, which is the one place XenForo's own documentation is wrong - it writes
+`php cmd.php xf:file-check [addon_id]`, and 2.3.7 answers `No arguments expected
+for "xf:file-check" command`:
+
+```bash
+php cmd.php xf:file-check --addon HldsRun/ResourcePublishDate
+# Все проверенные файлы (16) присутствуют и корректны.  /  All checked files (16) are present and correct.
+```
 
 ## 3. Translations
 

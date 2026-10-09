@@ -167,11 +167,11 @@ Version 1.x deliberately has no schema. If you need one:
 
 | Thing | Value |
 |---|---|
-| `version_string` in `addon.json` | `1.0.0` |
-| git tag | `1.0.0` |
-| GitHub release title | `1.0.0` |
-| release URL | `.../releases/tag/1.0.0` |
-| release archive | `HldsRun-ResourcePublishDate-1.0.0.zip` |
+| `version_string` in `addon.json` | `1.0.1` |
+| git tag | `1.0.1` |
+| GitHub release title | `1.0.1` |
+| release URL | `.../releases/tag/1.0.1` |
+| release archive | `HldsRun-ResourcePublishDate-1.0.1.zip` |
 
 Two consequences of that rule, both of which have to be held:
 
@@ -182,10 +182,10 @@ available to this project. `XF\AddOn\AddOn::getReleasePath()` builds it as:
 return $this->releasesDir . \XF::$DS . "$addOnId-$versionString.zip";
 ```
 
-A `v` there would also render in the Admin CP add-on list as "v1.0.0", which is
+A `v` there would also render in the Admin CP add-on list as "v1.0.1", which is
 not a version anyone wants to read.
 
-**The tag is `1.0.0`, not `v1.0.0`.** The `v` prefix is a common semver
+**The tag is `1.0.1`, not `v1.0.1`.** The `v` prefix is a common semver
 convention and XenForo add-ons on GitHub use both: `btcpayserver/xenforo` tags
 `v2.0.3` and releases `BS-BtcPayProvider-2.0.3.zip`, while
 `CleanTalk/xenforo-antispam` tags `2.6` and releases
@@ -227,17 +227,27 @@ Note the command names. XF 2.3.2 mixes two spellings and both are real:
 `xf-addon:bump-version` and `xf-addon:export` use a colon. Do not normalise them
 by eye - `php cmd.php list | grep addon` prints the truth.
 
-Where a XenForo installation is available, prefer its own builder over step 3:
+Where a XenForo installation is available, its own builder is available:
 
 ```bash
 php cmd.php xf-addon:build-release HldsRun/ResourcePublishDate
 ```
 
 It runs the real exporter, so anything the add-on ships through `_data/` is
-exported by XenForo rather than by our reading of the same rules. `tools/build.php`
-reproduces the result byte-for-byte - verified against the `hashes.json` shipped
-with XFRM 2.3.2 - and exists for when there is no XenForo to hand, such as in CI
-or on a laptop. It needs `ext-zip`; the XenForo command needs it too.
+exported by XenForo rather than by our reading of the same rules - and it edits
+the add-on to do it. `xf-addon:export` rewrites `_data/*.xml` from the database,
+and the JSON validator "repairs" `addon.json` by adding `legacy_addon_id` and
+`icon` and reformatting the `require` block; both were done to a file that was
+already correct. Measured on XenForo 2.3.7, its archive holds 57 files where
+`tools/build.php` holds 16 - about forty of them empty `_data` stubs for data
+types this add-on does not use - and it is written to
+`src/addons/HldsRun/ResourcePublishDate/_releases` rather than to the
+installation's `_releases`.
+
+`tools/build.php` is therefore the builder, not a reproduction of this one: it
+exists for when there is no XenForo to hand, such as in CI or on a laptop, and
+it does not touch a single tracked file except `hashes.json`. It needs `ext-zip`;
+the XenForo command needs it too.
 
 Both write `hashes.json` into the add-on directory. **Commit it.** XenForo uses
 it for the file integrity check and for update detection, so an out-of-date copy
@@ -248,8 +258,8 @@ makes File Check report every changed file as inconsistent.
 Then tag and push:
 
 ```bash
-git tag -a 1.0.0 -m "Resource publish date 1.0.0"
-git push origin 1.0.0
+git tag -a 1.0.1 -m "Resource publish date 1.0.1"
+git push origin 1.0.1
 ```
 
 The tag starts the `release` job, which publishes the already-verified archive

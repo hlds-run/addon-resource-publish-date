@@ -30,7 +30,9 @@ defined.
 Follow [INSTALL.md](INSTALL.md). Confirm:
 
 - [ ] Add-on installs and enables without a requirement error
-- [ ] **Tools → File Check** shows no unexpected content for the add-on
+- [ ] **Tools → File Check** shows no unexpected content for the add-on. From a
+      terminal it is `php cmd.php xf:file-check --addon HldsRun/ResourcePublishDate`
+      - an option, not an argument, despite what XenForo's own docs say
 - [ ] **Options → Resource publish date** exists and lists all six settings
 - [ ] `php cmd.php hlds-run-rpd:import-translation` lists languages, and the
       Russian row shows a shipped translation rather than `none`
