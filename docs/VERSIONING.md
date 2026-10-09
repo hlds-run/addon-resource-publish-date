@@ -90,7 +90,7 @@ Or skip the arithmetic and let XenForo do it: the command below infers
 
 ```bash
 # 1. compute version_id (see above), then
-php src/cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate \
+php cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate \
     --version-id 1001070 --version-string 1.1.0
 
 # 2. check the mask, version_string agreement, require and phrases

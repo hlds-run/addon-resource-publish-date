@@ -23,9 +23,9 @@ use XF\Entity\Language;
  * language rebuild jobs.
  *
  * Usage:
- *   php src/cmd.php hlds-run-rpd:import-translation                 # list languages
- *   php src/cmd.php hlds-run-rpd:import-translation 6 --dry-run
- *   php src/cmd.php hlds-run-rpd:import-translation 6
+ *   php cmd.php hlds-run-rpd:import-translation                 # list languages
+ *   php cmd.php hlds-run-rpd:import-translation 6 --dry-run
+ *   php cmd.php hlds-run-rpd:import-translation 6
  *
  * @see docs/TRANSLATIONS.md
  */
@@ -213,7 +213,7 @@ class ImportTranslation extends AbstractCommand
 
         $output->writeln(
             'Re-run with a language ID, for example: '
-            . '<info>php src/cmd.php hlds-run-rpd:import-translation ' . $rows[0][0] . '</info>'
+            . '<info>php cmd.php hlds-run-rpd:import-translation ' . $rows[0][0] . '</info>'
         );
     }
 }

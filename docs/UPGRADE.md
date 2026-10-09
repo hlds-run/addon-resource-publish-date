@@ -32,7 +32,7 @@ Pay attention to any entry mentioning:
 ```bash
 php tools/check.php                                 # local, before anything else
 rsync -av upload/src/addons/HldsRun/ user@forum:/srv/forum/src/addons/
-php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate
+php cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate
 ```
 
 Then verify, in this order:
@@ -43,7 +43,7 @@ Then verify, in this order:
 3. **Options → Resource publish date** shows all settings with the values you
    expect - an option that vanished means the data rebuild did not pick up the
    new `_data/options.xml`, which is a signal to stop and investigate.
-4. `php src/cmd.php xf:addon-upgrade` is idempotent, so running it twice is safe.
+4. `php cmd.php xf:addon-upgrade` is idempotent, so running it twice is safe.
 
 ### When a release renames an `edit_format="callback"` method
 
@@ -66,8 +66,8 @@ once, on `Option\ExcludedCategories::renderCheckbox`.
 If the release adds phrases, re-import each translation:
 
 ```bash
-php src/cmd.php hlds-run-rpd:import-translation 6 --file=ru --dry-run
-php src/cmd.php hlds-run-rpd:import-translation 6 --file=ru
+php cmd.php hlds-run-rpd:import-translation 6 --file=ru --dry-run
+php cmd.php hlds-run-rpd:import-translation 6 --file=ru
 ```
 
 Until you do, the new master phrases simply have no translation and XenForo falls
@@ -78,7 +78,7 @@ back to the master text. Nothing breaks; the Admin CP shows English in a few pla
 ```bash
 git checkout <previous-tag>
 rsync -av upload/src/addons/HldsRun/ user@forum:/srv/forum/src/addons/
-php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate
+php cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate
 ```
 
 Rolling back does not un-shift dates that were already shifted. To stop future

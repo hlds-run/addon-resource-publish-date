@@ -4,7 +4,7 @@
     Master (English) phrases. These become xf_phrase rows with language_id = 0.
 
     Russian translations live in /translations/ru.xml and are installed with:
-      php src/cmd.php hlds-run-rpd:import-translation 6
+      php cmd.php hlds-run-rpd:import-translation 6
     See docs/TRANSLATIONS.md.
 
     Naming conventions, which are XenForo's, not ours:

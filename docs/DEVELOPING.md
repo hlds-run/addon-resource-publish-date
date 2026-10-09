@@ -212,7 +212,7 @@ catches - see [RELEASING.md](RELEASING.md). This section is the mechanical part.
 
 ```bash
 # 1. bump the version (also updates version_id/version_string on every phrase)
-php src/cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate
+php cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate
 
 # 2. validate
 php tools/check.php
@@ -225,12 +225,12 @@ Note the command names. XF 2.3.2 mixes two spellings and both are real:
 `xf:addon-install`, `xf:addon-uninstall`, `xf:addon-upgrade` and
 `xf:addon-rebuild` use a hyphen, while `xf-addon:build-release`,
 `xf-addon:bump-version` and `xf-addon:export` use a colon. Do not normalise them
-by eye - `php src/cmd.php list | grep addon` prints the truth.
+by eye - `php cmd.php list | grep addon` prints the truth.
 
 Where a XenForo installation is available, prefer its own builder over step 3:
 
 ```bash
-php src/cmd.php xf-addon:build-release HldsRun/ResourcePublishDate
+php cmd.php xf-addon:build-release HldsRun/ResourcePublishDate
 ```
 
 It runs the real exporter, so anything the add-on ships through `_data/` is

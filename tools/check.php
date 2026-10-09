@@ -10,7 +10,7 @@
  *   php -l                 CI runs this on every PHP file; a syntax error only
  *                          surfaces at runtime otherwise.
  *   XML well-formedness    XenForo parses _data/*.xml on install and fails loudly.
- *   addon.json validity    `php src/cmd.php xf-addon:validate-json` covers it.
+ *   addon.json validity    `php cmd.php xf-addon:validate-json` covers it.
  *
  * What is here are the mistakes that install cleanly and then do nothing:
  * a class extension pointing at a class that does not exist, a namespace that

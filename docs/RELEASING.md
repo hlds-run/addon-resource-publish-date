@@ -249,8 +249,8 @@ Before cutting any release that touches install-time or approval-time code:
 2. **Approve something** in the moderation queue: a resource, and its thread. This
    is the other path only a real forum exercises.
 3. **Run both CLI commands**, each with the flags that only write nothing:
-   `php src/cmd.php hlds-run-rpd:import-translation` (no arguments - the language
-   listing) and `php src/cmd.php hlds-run-rpd:backfill --dry-run`. Both crashed on
+   `php cmd.php hlds-run-rpd:import-translation` (no arguments - the language
+   listing) and `php cmd.php hlds-run-rpd:backfill --dry-run`. Both crashed on
    a released version, in ways that a clean install and a data rebuild cannot show.
 4. Read the error log afterwards. `postInstall()` writes there.
 

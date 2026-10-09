@@ -171,7 +171,7 @@ not tell you which add-on did it.
 
 ### `Language N does not exist`
 
-Run `php src/cmd.php hlds-run-rpd:import-translation` with no arguments to list
+Run `php cmd.php hlds-run-rpd:import-translation` with no arguments to list
 the languages actually on this board. Language ids are per-installation.
 
 ### `Translation file X was not found`

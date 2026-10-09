@@ -63,11 +63,11 @@ php tools/build.php
 cp -r upload/src/addons/HldsRun <forum>/src/addons/
 
 # 3. install it
-php src/cmd.php xf:addon-install HldsRun/ResourcePublishDate
+php cmd.php xf:addon-install HldsRun/ResourcePublishDate
 
 # 4. import the Russian translation (list languages first)
-php src/cmd.php hlds-run-rpd:import-translation
-php src/cmd.php hlds-run-rpd:import-translation 6
+php cmd.php hlds-run-rpd:import-translation
+php cmd.php hlds-run-rpd:import-translation 6
 
 # 5. configure it
 #    Admin CP -> Options -> Resource publish date

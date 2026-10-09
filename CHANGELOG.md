@@ -7,7 +7,7 @@ the project uses [semantic versioning](https://semver.org/).
 
 `version_id` in `addon.json` is `version_string` encoded, not a counter, and it
 must be recomputed for every release - the CLI command
-`php src/cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate --version-id XXXXXXX --version-string X.X.X`
+`php cmd.php xf-addon:bump-version HldsRun/ResourcePublishDate --version-id XXXXXXX --version-string X.X.X`
 does it for you, including updating the `version_id` / `version_string`
 attributes on every phrase. See [docs/VERSIONING.md](docs/VERSIONING.md) for the
 mask, and [docs/DEVELOPING.md](docs/DEVELOPING.md) for the naming rules - the git

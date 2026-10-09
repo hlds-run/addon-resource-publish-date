@@ -8,7 +8,7 @@
  * The result lands in _releases/HldsRun-ResourcePublishDate-<version>.zip and is
  * what you upload through Admin CP -> Add-ons -> Install Add-on -> Upload ZIP.
  *
- * XenForo has `php src/cmd.php xf-addon:build-release` for this, and where a
+ * XenForo has `php cmd.php xf-addon:build-release` for this, and where a
  * XenForo installation is available that is the better command: it runs the real
  * exporter, so anything this add-on ships via _data/ is exported by XenForo
  * itself rather than by our reading of the same rules. Use this script when
@@ -171,7 +171,7 @@ if (!class_exists(ZipArchive::class)) {
 	echo "  locally: apt install php-zip\n";
 	echo "  in CI:   shivammathur/setup-php with extensions: zip\n";
 	echo "  or build on a machine that has XenForo:\n";
-	echo "    php src/cmd.php xf-addon:build-release " . ADDON_ID . "\n";
+	echo "    php cmd.php xf-addon:build-release " . ADDON_ID . "\n";
 	exit(0);
 }
 

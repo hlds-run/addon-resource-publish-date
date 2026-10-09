@@ -25,7 +25,7 @@ php tools/build.php
 # _releases/HldsRun-ResourcePublishDate-1.0.0.zip
 ```
 
-If you have a XenForo installation to hand, `php src/cmd.php xf-addon:build-release
+If you have a XenForo installation to hand, `php cmd.php xf-addon:build-release
 HldsRun/ResourcePublishDate` is the better command: it runs XenForo's own
 exporter. Both produce the same archive.
 
@@ -75,7 +75,7 @@ layer.
 
 ```bash
 cd /srv/forum
-php src/cmd.php xf:addon-install HldsRun/ResourcePublishDate
+php cmd.php xf:addon-install HldsRun/ResourcePublishDate
 ```
 
 `addon.json` declares `require` for XF and XFRM, so the installer refuses to run
@@ -110,9 +110,9 @@ still in place. To re-import after a wording change, or to add a language the
 board gained later:
 
 ```bash
-php src/cmd.php hlds-run-rpd:import-translation          # lists languages and which file matches each
-php src/cmd.php hlds-run-rpd:import-translation 6 --dry-run
-php src/cmd.php hlds-run-rpd:import-translation 6
+php cmd.php hlds-run-rpd:import-translation          # lists languages and which file matches each
+php cmd.php hlds-run-rpd:import-translation 6 --dry-run
+php cmd.php hlds-run-rpd:import-translation 6
 ```
 
 The listing's **Shipped translation** column is the fastest way to answer "why did
@@ -149,13 +149,13 @@ them to the date they were actually approved:
 
 ```bash
 # 1. always start here
-php src/cmd.php hlds-run-rpd:backfill --dry-run
+php cmd.php hlds-run-rpd:backfill --dry-run
 
 # 2. narrow it: only approvals older than 30 days, first 100 resources
-php src/cmd.php hlds-run-rpd:backfill --dry-run --days=30 --limit=100
+php cmd.php hlds-run-rpd:backfill --dry-run --days=30 --limit=100
 
 # 3. apply, including the discussion threads
-php src/cmd.php hlds-run-rpd:backfill --days=30 --threads
+php cmd.php hlds-run-rpd:backfill --days=30 --threads
 ```
 
 The command is idempotent: it only touches resources whose stored publish date is
@@ -167,7 +167,7 @@ it on production.
 ## 6. Uninstall
 
 ```bash
-php src/cmd.php xf:addon-uninstall HldsRun/ResourcePublishDate
+php cmd.php xf:addon-uninstall HldsRun/ResourcePublishDate
 ```
 
 There is no database state to clean up: the add-on creates no tables and adds no

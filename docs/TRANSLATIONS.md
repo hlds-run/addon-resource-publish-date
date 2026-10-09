@@ -88,13 +88,13 @@ either direction. Check the phrases.
 
 ```bash
 # 1. what languages exist, and which shipped file matches each
-php src/cmd.php hlds-run-rpd:import-translation
+php cmd.php hlds-run-rpd:import-translation
 
 # 2. dry run: how many phrases, which language
-php src/cmd.php hlds-run-rpd:import-translation 6 --file=ru --dry-run
+php cmd.php hlds-run-rpd:import-translation 6 --file=ru --dry-run
 
 # 3. apply
-php src/cmd.php hlds-run-rpd:import-translation 6 --file=ru
+php cmd.php hlds-run-rpd:import-translation 6 --file=ru
 ```
 
 The **Shipped translation** column in step 1 is `none` when the board's language
@@ -140,7 +140,7 @@ empty value, or a wrong `addon_id`.
 5. `php tools/check.php`
 
 Steps 1 and 3 together are enforced by the validator, which compares the key sets.
-On the forum, run `php src/cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate`
+On the forum, run `php cmd.php xf:addon-upgrade HldsRun/ResourcePublishDate`
 (or rebuild add-on data) so the master phrase row appears, then re-import each
 translation.
 
